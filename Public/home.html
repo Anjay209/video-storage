@@ -1,0 +1,1895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CertQuest Dashboard</title>
+  <link rel="stylesheet" href="home.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/meilisearch@latest/dist/bundles/meilisearch.umd.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+
+
+</head>
+<body>
+
+  <!-- Top Nav -->
+  <div class="top-header">
+    <div class="nav-left">🌐</div>
+    <div class="nav-title">Dashboard <span class="new-badge">(New!)</span></div>
+    <div class="nav-right">
+      <input type="text" id="navbarSearch" placeholder="Search CertQuest..." />
+      <span class="search-icon" id="navbarSearchIcon">🔍</span>
+      <div id="searchDropdown"></div>
+    </div>
+  </div>
+
+  <div class="main-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">CQ</div>
+      <nav>
+        <ul class="nav-icons">
+          <li>
+            <a href="index.html">
+              🏠 <span class="nav-label">Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a href="Competitions/competition.html">
+              📊 <span class="nav-label">Stats</span>
+            </a>
+          </li>
+          <li>
+    <a href="javascript:void(0)" onclick="toggleCommentPanel()">  
+        🎯 <span class="nav-label">Goals</span>
+        <span class="notification-badge"></span>
+    </a>
+          </li>
+          <li>
+            <a href="/schedule">
+              📅 <span class="nav-label">Schedule</span>
+            </a>
+          </li>
+          <li>
+            <a href="/settings">
+              ⚙️ <span class="nav-label">Settings</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="content">
+      <div class="welcome-section">
+        <h2 class="course-title">certquest dashboard</h2>
+        <h1 class="unit-title">Welcome back, <span class="name" id="userName">MASTER >.< !</span></h1>
+        <div class="meta-info">
+          <span class="verified"> Personalized for your goals</span>
+          <span class="dot">•</span>
+          <span class="citation-label" id="userComps">Parliamentary Procedures, Partnership with Business Project</span>
+        </div>
+      </div>
+
+      <div class="ai-summary">
+        <h3>Here's how you're doing:</h3>
+        <p>You've completed 3/5 of your modules this week. Your strongest area is Public Speaking. Let's work on Business Ethics next!</p>
+      </div>
+
+      <div class="cards">
+        <div class="schoolhouse-card">
+          <div class="card-icon"><img src="assets/forum.png" class="feature-box-icon"></div>
+          <div class="card-content">
+            <h3>Forum</h3>
+            <p class="desc">Connect, ask questions, and share insights with fellow members.</p>
+            <a href="forum/forum.html">Go to Forum →</a>
+          </div>
+        </div>
+        <div class="schoolhouse-card">
+          <div class="card-icon"><img src="assets/calendar.png" class="feature-box-icon"></div>
+          <div class="card-content">
+            <h3>Upcoming</h3>
+            <p class="desc">See your next mentor meeting, study group, or bracket match.</p>
+            <a href="Calendar/calendar.html">Go to Schedule →</a>
+          </div>
+        </div>
+        <div class="schoolhouse-card">
+          <div class="card-icon"><img src="assets/leadership.png" class="feature-box-icon"></div>
+          <div class="card-content">
+            <h3>Leaderboard</h3>
+            <p class="desc"> Check your XP earned, time trained, and leaderboard rank. </p>
+            <a href="Leaderboard/leaderboard.html">Go to Leaderboard →</a>
+          </div>
+        </div>
+        <div class="schoolhouse-card">
+          <div class="card-icon"><img src="assets/mentorship.png" class="feature-box-icon"></div>
+          <div class="card-content">
+            <h3>Mentorship</h3>
+            <p class="desc">Complete mentor modules, join teams, and earn certifications.</p>
+            <a href="Training/training.html">Start Training →</a>
+          </div>
+        </div>
+      </div>
+
+      <section class="faq-wrapper">
+        <div class="faq-category"><strong>Frequently Asked Questions</strong></div>
+        <div class="accordion">
+          <div class="accordion-item">
+            <button class="accordion-toggle" onclick="toggleAccordion(this)">
+              <span class="accordion-label">How will CertQuest help me?</span>
+              <i data-feather="chevron-down" class="chevron-icon"></i>
+            </button>
+            <div class="accordion-content hidden">
+              CertQuest provides AI-generated insights, upcoming deadlines, and performance tracking to support your growth.
+            </div>
+          </div>
+          
+          <div class="accordion-item">
+            <button class="accordion-toggle" onclick="toggleAccordion(this)">
+              <span class="accordion-label">What tools do I get?</span>
+              <i data-feather="chevron-down" class="chevron-icon"></i>
+            </button>
+            <div class="accordion-content hidden">
+              You get access to a dashboard, analytics, goal setting, and smart quiz tracking all in one place.
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Goal Modal -->
+  <div id="goalModal" class="goal-modal">
+    <div class="modal-content">
+      <h2>Set a Study Goal</h2>
+      <div class="goal-choices">
+        <div class="goal-card" data-goal="passive">Passive<br><span>20 min/week</span></div>
+        <div class="goal-card" data-goal="active">Active<br><span>1 hr/week</span></div>
+        <div class="goal-card" data-goal="committed">Committed<br><span>2 hrs/week</span></div>
+        <div class="goal-card" data-goal="running">Running the Show<br><span>4+ hrs/week</span></div>
+      </div>
+      <label for="comps">What competitions are you in?</label>
+      <input id="comps" type="text" placeholder="Math, FBLA, DECA, etc">
+
+      <div style="margin: 1.2rem 0 0.5rem 0;display:flex;align-items:center;gap:0.5rem;">
+        <input type="checkbox" id="isMentor" style="width:18px;height:18px;accent-color:#2563eb;">
+        <label for="isMentor" style="margin:0;font-size:1rem;">I am a mentor for a competition</label>
+      </div>
+
+      <div id="mentorCompDiv" style="display:none;">
+        <label for="mentorComp" style="margin: 1.2rem 0 0.5rem 0;">Which competition?</label><br><br>
+        <input id="mentorComp" type="text" placeholder="e.g., Partnership with Business">
+      </div>
+
+      <button id="goalSubmitBtn" disabled>Save</button>
+    </div>
+  </div>
+  <div class="modal-backdrop"></div>
+
+  <!-- Assignment Modal -->
+  <div id="cq-assignment-modal" class="cq-modal">
+    <div class="cq-modal-content">
+      <span class="cq-close" onclick="closeAssignmentModal()">&times;</span>
+      <div id="cq-assignment-title" class="cq-modal-title">New Assignment</div>
+      
+      <!-- Assignment Info (shown first) -->
+      <div id="cq-assignment-info">
+        <div id="cq-assignment-fields" class="cq-modal-fields"></div>
+        <div class="cq-modal-footer" style="margin-top:1.5rem; text-align:right;">
+          <button class="cq-modal-btn" onclick="acceptAssignmentNow()">I'll do it now</button>
+          <button class="cq-modal-btn" onclick="snoozeAssignment()">I'll do it later</button>
+        </div>
+      </div>
+      
+      <!-- Quiz Section (hidden initially) -->
+      <div id="cq-assignment-quiz" style="display:none;">
+        <div class="quiz-meta">
+          <span id="quizDifficulty">Difficulty: Medium</span>
+          <span id="quizTime">Time: 10 mins</span>
+          <span id="quizScore" style="margin-left: auto; font-weight: 600;">Score: 0/5</span>
+        </div>
+        <div id="quizQuestions" class="cq-modal-fields"></div>
+        <div class="cq-modal-footer">
+          <button class="cq-modal-btn" id="submitQuizBtn" disabled>Submit Answers</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Speaking Assignment Modal -->
+  <div id="cq-speaking-modal" class="cq-speaking-modal" style="display:none;">
+    <div class="cq-speaking-modal-content">
+      <span class="cq-speaking-close">&times;</span>
+      <h2 class="cq-speaking-title">Assignment</h2>
+      
+      <!-- Display two questions at the top -->
+      <div class="cq-speaking-section">
+        <label class="cq-speaking-label"><strong>Question 1:</strong></label>
+        <div id="cq-speaking-q1" class="cq-speaking-qtext">What is your strategy for this scenario?</div>
+      </div>
+      <div class="cq-speaking-section">
+        <label class="cq-speaking-label"><strong>Question 2:</strong></label>
+        <div id="cq-speaking-q2" class="cq-speaking-qtext">How would you handle unexpected challenges?</div>
+      </div>
+      
+      <!-- Recording area -->
+      <div class="cq-speaking-section">
+        <label class="cq-speaking-label"><strong>Record Your Response:</strong></label>
+        <div class="recording-controls">
+          <button id="cq-speaking-audioBtn">🎤 Audio Only</button>
+          <button id="cq-speaking-videoBtn">🎥 Video + Audio</button>
+          <button id="cq-speaking-stopBtn" style="display:none;">⏹ Stop</button>
+        </div>
+        <div class="media-preview">
+          <audio id="cq-speaking-audioPlayback" controls style="display:none;"></audio>
+          <video id="cq-speaking-videoPreview" controls style="display:none; width:100%; max-width:500px;"></video>
+        </div>
+      </div>
+      <button id="cq-speaking-downloadBtn" style="
+  background: linear-gradient(90deg, #aee7f5, #e0c3fc);
+  color: #222;
+  border: none;
+  border-radius: 1.25rem;
+  padding: 0.7rem 1.8rem;
+  font-size: 1.06rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(60,60,120,0.09);
+  cursor: pointer;
+  margin: 1rem 0 0 0;
+  transition: background 0.18s, transform 0.12s, box-shadow 0.15s;
+  outline: none;
+">Download Your Response</button>
+
+<button id="cq-speaking-submitBtn" class="primary-btn">Submit Response</button>
+
+</div>
+
+      
+    </div>
+  </div>
+
+  <!-- Congratulations Modal -->
+  <div id="congratsModal" class="cq-modal" style="display:none;">
+    <div class="cq-modal-content">
+      <span class="cq-close" onclick="closeCongratsModal()">&times;</span>
+      <div class="cq-modal-title">🎉 Congratulations!</div>
+      <div class="cq-modal-fields">
+        <!-- Content will be inserted here -->
+      </div>
+      <div class="cq-modal-footer">
+        <button class="cq-modal-btn" onclick="closeCongratsModal()">Got it!</button>
+      </div>
+    </div>
+  </div>
+
+<div id="mentorCommentModal">
+  <div class="modal-content">
+    <span class="close" onclick="closeMentorCommentModal()">&times;</span>
+    <h2 id="mentorCommentAssignment"></h2>
+    <div id="mentorCommentText"></div>
+    <button class="btn" onclick="closeMentorCommentModal()">Close</button>
+  </div>
+</div>
+
+<div class="comment-panel" id="commentPanel">
+  <div class="comment-header">
+    <span class="comment-title">Notifications</span>
+    <div>
+      <button class="close-btn" onclick="toggleCommentPanel()">✕</button>
+    </div>
+  </div>
+  <div class="comment-content" id="notificationList">
+    <!-- Notifications will appear here -->
+  </div>
+</div>
+
+
+
+
+
+
+<script>
+  // Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyDGYp9sBwOWBdu9W46Q6XFp9zfLCrEsaO4",
+    authDomain: "certquest-94959.firebaseapp.com",
+    projectId: "certquest-94959",
+    storageBucket: "certquest-94959.appspot.com",
+    messagingSenderId: "323956529033",
+    appId: "1:323956529033:web:e9c9c6a3c7668b8a72f358",
+    measurementId: "G-F5JHTGGN6K"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  const auth = firebase.auth();
+
+  // Global variables
+  let modal, backdrop, goalSubmitBtn, compsInput, goalCards, isMentorCheckbox, mentorCompDiv, mentorCompInput, selectedGoal;
+  let cqSpeakingMediaRecorder = null;
+  let cqSpeakingMediaStream = null;
+  let cqSpeakingRecordedChunks = [];
+  let isRecording = false;
+  let currentCommentAssignmentId = null; // For mentor comment modal
+
+
+  emailjs.init('8-o5NK-hzHmj34CDl');  // <-- Your EmailJS public key
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = error => reject(error);
+  });
+}
+
+function showMentorCommentModal(assignmentName, comment, notificationId) {
+  console.log("Showing mentor comment modal:", assignmentName, comment); // Debug log
+  
+  document.getElementById('mentorCommentAssignment').textContent = `Feedback for "${assignmentName}"`;
+  document.getElementById('mentorCommentText').textContent = comment;
+ document.getElementById('mentorCommentModal').style.display = 'flex';
+
+  // When closed, mark notification as read
+  window.closeMentorCommentModal = function() {
+    document.getElementById('mentorCommentModal').style.display = 'none';
+    if (notificationId) {
+      db.collection('notifications').doc(notificationId).update({
+        read: true
+      }).catch(err => console.error("Error marking notification as read:", err));
+    }
+  };
+}
+
+
+
+
+  // Quiz answers
+  let quizAnswers = {
+    q1: "To make meetings more efficient",
+    q2: "Adjourn", 
+    q3: "Majority vote",
+    q4: "Amend",
+    q5: "\"I move to...\""
+  };
+  let userScore = 0;
+
+  // Quiz Questions Array
+// Replace your existing quizQuestions array with this
+const quizQuestions = [
+  {
+    text: "What is the primary purpose of parliamentary procedure?",
+    competency: "Meeting Management",
+    correctAnswer: "To make meetings more efficient",
+    options: [
+      "To make meetings more efficient",
+      "To give the president more power",
+      "To eliminate debate",
+      "To make meetings longer"
+    ]
+  },
+  {
+    text: "Which motion is used to end a meeting?",
+    competency: "Meeting Management", 
+    correctAnswer: "Adjourn",
+    options: [
+      "Adjourn",
+      "Recess",
+      "Postpone",
+      "Table"
+    ]
+  },
+  {
+    text: "How many votes are typically needed to pass a motion?",
+    competency: "Voting Procedures",
+    correctAnswer: "Majority vote",
+    options: [
+      "Majority vote",
+      "Unanimous vote",
+      "Two-thirds vote",
+      "Simple majority"
+    ]
+  },
+  {
+    text: "What motion is used to change a pending motion?",
+    competency: "Amendment Process",
+    correctAnswer: "Amend",
+    options: [
+      "Amend",
+      "Substitute",
+      "Withdraw",
+      "Reconsider"
+    ]
+  },
+  {
+    text: "How should you properly introduce a motion?",
+    competency: "Meeting Management",
+    correctAnswer: "\"I move to...\"",
+    options: [
+      "\"I move to...\"",
+      "\"I suggest that...\"",
+      "\"I want to...\"",
+      "\"I think we should...\""
+    ]
+  }
+];
+
+// Add this new function to analyze competency performance
+function getQuizCompetencyBreakdown() {
+  const competencyStats = {};
+
+  document.querySelectorAll('.quiz-question').forEach((qDiv, idx) => {
+    const competency = quizQuestions[idx].competency;
+    const selectedOption = qDiv.querySelector('input[type="radio"]:checked');
+    const isCorrect = selectedOption && 
+                     selectedOption.value === quizQuestions[idx].correctAnswer;
+
+    if (!competencyStats[competency]) {
+      competencyStats[competency] = { total: 0, correct: 0 };
+    }
+    
+    competencyStats[competency].total++;
+    if (isCorrect) competencyStats[competency].correct++;
+  });
+
+  return competencyStats;
+}
+
+// Add this new function to show detailed results
+function showCompetencyResults(score, totalQuestions, competencyStats) {
+  const modal = document.getElementById('congratsModal');
+  const content = modal.querySelector('.cq-modal-fields');
+  
+  let competencyHTML = Object.entries(competencyStats).map(([comp, stats]) => `
+    <div class="competency-result">
+      <span>${comp}:</span>
+      <strong>${stats.correct}/${stats.total}</strong>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: ${(stats.correct/stats.total)*100}%"></div>
+      </div>
+    </div>
+  `).join('');
+
+  content.innerHTML = `
+    <h3 style="text-align:center">Quiz Results</h3>
+    <div style="text-align:center; font-size:1.2rem; margin:1rem 0">
+      Score: <strong>${score}/${totalQuestions}</strong>
+    </div>
+    <div style="margin-top:1.5rem">
+      <h4>Competency Breakdown:</h4>
+      ${competencyHTML}
+    </div>
+  `;
+
+  modal.style.display = 'block';
+}
+
+function showNotification(title, description, onClick = null) {
+    const list = document.getElementById("notificationList");
+    const panel = document.getElementById("commentPanel");
+
+    const item = document.createElement("div");
+    item.className = "notification-item";
+    item.innerHTML = `
+        <div class="notification-header">
+            <strong>${title}</strong>
+            <span class="notification-time">Just now</span>
+        </div>
+        <div class="notification-body">${description}</div>
+    `;
+
+    if (onClick) {
+        item.addEventListener("click", () => {
+            onClick();
+            // Don't remove the notification, just mark it as read
+            item.classList.add("read");
+        });
+    }
+
+    list.prepend(item);
+
+    // Show a badge when new notifications arrive
+    const notificationBadge = document.querySelector('.nav-icons li a[onclick="toggleCommentPanel()"] .notification-badge');
+    if (notificationBadge) {
+        notificationBadge.style.display = 'inline-block';
+    }
+}
+
+
+function renderQuiz(questionsArr) {
+  const quizContainer = document.getElementById('quizQuestions');
+  quizContainer.innerHTML = questionsArr.map((q, idx) => `
+    <div class="quiz-question" data-competency="${q.competency}">
+      <h4>${idx + 1}. ${q.text}</h4>
+      ${q.options.map(opt => `
+        <label class="quiz-option">
+          <input type="radio" name="q${idx+1}" value="${opt}"> ${opt}
+        </label>
+      `).join('')}
+    </div>
+  `).join('');
+}
+
+
+  feather.replace(); // renders all feather icons
+
+  function toggleAccordion(button) {
+    const content = button.nextElementSibling;
+    const icon = button.querySelector('.chevron-icon');
+    const isActive = button.classList.contains('active');
+    if (isActive) {
+      button.classList.remove('active');
+      content.style.maxHeight = null;
+      if (icon) icon.classList.remove('rotate');
+    } else {
+      button.classList.add('active');
+      content.style.maxHeight = content.scrollHeight + "px";
+      if (icon) icon.classList.add('rotate');
+    }
+  }
+
+  // Check browser compatibility for recording
+  function checkRecordingSupport() {
+    const issues = [];
+    
+    if (!navigator.mediaDevices) {
+      issues.push("mediaDevices not supported");
+    }
+    
+    if (!navigator.mediaDevices.getUserMedia) {
+      issues.push("getUserMedia not supported");
+    }
+    
+    if (!window.MediaRecorder) {
+      issues.push("MediaRecorder not supported");
+    }
+    
+    if (issues.length > 0) {
+      console.error("Recording not supported:", issues.join(", "));
+      alert("Your browser does not support audio/video recording: " + issues.join(", "));
+      return false;
+    }
+    
+    return true;
+  }
+
+  // Fixed audio recording function
+  function startAudioRecording() {
+    document.getElementById('cq-speaking-downloadBtn').style.display = 'none';
+    console.log("Starting audio recording...");
+    
+    if (!checkRecordingSupport()) return;
+    
+    // Stop any existing recording first
+    cqSpeakingStopAllMedia();
+    cqSpeakingRecordedChunks = [];
+    
+    navigator.mediaDevices.getUserMedia({ 
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        sampleRate: 44100
+      }
+    })
+    .then(stream => {
+      console.log("Audio stream obtained successfully");
+      cqSpeakingMediaStream = stream;
+      
+      // Check MediaRecorder support and set up with best available format
+      let options = {};
+      if (MediaRecorder.isTypeSupported('audio/webm')) {
+        options.mimeType = 'audio/webm';
+      } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
+        options.mimeType = 'audio/mp4';
+      } else if (MediaRecorder.isTypeSupported('audio/ogg')) {
+        options.mimeType = 'audio/ogg';
+      }
+      
+      cqSpeakingMediaRecorder = new MediaRecorder(stream, options);
+      console.log("MediaRecorder created with mimeType:", cqSpeakingMediaRecorder.mimeType);
+      
+      cqSpeakingMediaRecorder.ondataavailable = (event) => {
+        console.log("Audio data available:", event.data.size, "bytes");
+        if (event.data.size > 0) {
+          cqSpeakingRecordedChunks.push(event.data);
+        }
+      };
+      
+      cqSpeakingMediaRecorder.onstop = () => {
+  console.log("Audio recording stopped, processing...");
+  if (cqSpeakingRecordedChunks.length === 0) {
+    console.error("No audio data recorded");
+    alert("No audio data was recorded. Please try again.");
+    return;
+  }
+  const mimeType = cqSpeakingMediaRecorder.mimeType || 'audio/webm';
+  const blob = new Blob(cqSpeakingRecordedChunks, { type: mimeType });
+  console.log("Created audio blob:", blob.size, "bytes, type:", blob.type);
+
+  const audioURL = URL.createObjectURL(blob);
+  const audioElement = document.getElementById('cq-speaking-audioPlayback');
+  if (audioElement) {
+    audioElement.src = audioURL;
+    audioElement.style.display = 'block';
+    audioElement.controls = true;
+    console.log("Audio playback element updated");
+    audioElement.addEventListener('loadedmetadata', () => {
+      console.log("Audio metadata loaded, duration:", audioElement.duration);
+    });
+    audioElement.addEventListener('error', (e) => {
+      console.error("Audio playback error:", e);
+    });
+  } else {
+    console.error("Audio playback element not found in DOM");
+  }
+
+  // Download & Upload section - THIS IS WHAT YOU WANT
+  const downloadBtn = document.getElementById('cq-speaking-downloadBtn');
+  if (downloadBtn && blob) {
+    downloadBtn.style.display = 'inline-block';
+    downloadBtn.onclick = function() {
+      // Create a temporary link and trigger download
+      const url = URL.createObjectURL(blob);
+      const filename = `CertQuest_Response_${Date.now()}.webm`;
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 100);
+
+      // Show the upload box immediately after download click
+      document.getElementById('cq-speaking-uploadBox').style.display = 'block';
+    };
+  }
+
+  isRecording = false;
+};
+
+      cqSpeakingMediaRecorder.onerror = (event) => {
+        console.error("MediaRecorder error:", event.error);
+        alert("Recording error: " + event.error.message);
+        isRecording = false;
+      };
+      
+      // Start recording
+      cqSpeakingMediaRecorder.start(1000); // Collect data every second
+      isRecording = true;
+      console.log("Audio recording started");
+      
+      // Show stop button
+      const stopBtn = document.getElementById('cq-speaking-stopBtn');
+      if (stopBtn) {
+        stopBtn.style.display = 'inline-block';
+        stopBtn.textContent = '⏹ Stop Audio Recording';
+      }
+      
+      // Hide video preview if showing
+      const videoPreview = document.getElementById('cq-speaking-videoPreview');
+      if (videoPreview) {
+        videoPreview.style.display = 'none';
+      }
+    })
+    .catch(error => {
+      console.error('Audio recording error:', error);
+      let errorMessage = 'Failed to access microphone: ';
+      if (error.name === 'NotAllowedError') {
+        errorMessage += 'Permission denied. Please allow microphone access and try again.';
+      } else if (error.name === 'NotFoundError') {
+        errorMessage += 'No microphone found.';
+      } else if (error.name === 'NotReadableError') {
+        errorMessage += 'Microphone is already in use.';
+      } else {
+        errorMessage += error.message;
+      }
+      alert(errorMessage);
+      isRecording = false;
+    });
+  }
+
+  // Fixed video recording function
+  function startVideoRecording() {
+    document.getElementById('cq-speaking-downloadBtn').style.display = 'none';
+
+    console.log("Starting video recording...");
+    
+    if (!checkRecordingSupport()) return;
+    
+    // Stop any existing recording first
+    cqSpeakingStopAllMedia();
+    cqSpeakingRecordedChunks = [];
+    
+    navigator.mediaDevices.getUserMedia({ 
+      video: {
+        width: { min: 640, ideal: 1280, max: 1920 },
+        height: { min: 480, ideal: 720, max: 1080 },
+        frameRate: { min: 15, ideal: 30, max: 60 }
+      }, 
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        sampleRate: 44100
+      }
+    })
+    .then(stream => {
+      console.log("Video stream obtained successfully");
+      cqSpeakingMediaStream = stream;
+      
+      const videoElement = document.getElementById('cq-speaking-videoPreview');
+      if (!videoElement) {
+        console.error("Video preview element not found in DOM");
+        alert("Video preview element not found");
+        return;
+      }
+      
+      // Set up video preview
+      videoElement.srcObject = stream;
+      videoElement.muted = true; // Prevent feedback
+      videoElement.autoplay = true;
+      videoElement.playsInline = true; // Important for mobile
+      videoElement.style.display = 'block';
+      
+      // Wait for video to be ready before starting recording
+      videoElement.addEventListener('loadedmetadata', () => {
+        videoElement.play().catch(e => {
+          console.error("Error playing video preview:", e);
+        });
+      });
+      
+      // Hide audio playback if showing
+      const audioPlayback = document.getElementById('cq-speaking-audioPlayback');
+      if (audioPlayback) {
+        audioPlayback.style.display = 'none';
+      }
+      
+      // Set up MediaRecorder with best available format
+      let options = {};
+      if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
+        options.mimeType = 'video/webm;codecs=vp9';
+      } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8')) {
+        options.mimeType = 'video/webm;codecs=vp8';
+      } else if (MediaRecorder.isTypeSupported('video/webm')) {
+        options.mimeType = 'video/webm';
+      } else if (MediaRecorder.isTypeSupported('video/mp4')) {
+        options.mimeType = 'video/mp4';
+      }
+      
+      cqSpeakingMediaRecorder = new MediaRecorder(stream, options);
+      console.log("MediaRecorder created with mimeType:", cqSpeakingMediaRecorder.mimeType);
+      
+      cqSpeakingMediaRecorder.ondataavailable = (event) => {
+        console.log("Video data available:", event.data.size, "bytes");
+        if (event.data.size > 0) {
+          cqSpeakingRecordedChunks.push(event.data);
+        }
+      };
+      
+      cqSpeakingMediaRecorder.onstop = () => {
+  console.log("Video recording stopped, processing...");
+  if (cqSpeakingRecordedChunks.length === 0) {
+    console.error("No video data recorded");
+    alert("No video data was recorded. Please try again.");
+    return;
+  }
+  const mimeType = cqSpeakingMediaRecorder.mimeType || 'video/webm';
+  const blob = new Blob(cqSpeakingRecordedChunks, { type: mimeType });
+  console.log("Created video blob:", blob.size, "bytes, type:", blob.type);
+
+  const videoURL = URL.createObjectURL(blob);
+  const videoElement = document.getElementById('cq-speaking-videoPreview');
+  // Switch from live preview to recorded video
+  if (videoElement) {
+    videoElement.srcObject = null;
+    videoElement.src = videoURL;
+    videoElement.controls = true;
+    videoElement.muted = false;
+    videoElement.autoplay = false;
+    videoElement.style.display = 'block';
+    videoElement.addEventListener('loadedmetadata', () => {
+      console.log("Recorded video metadata loaded, duration:", videoElement.duration);
+    });
+    videoElement.addEventListener('error', (e) => {
+      console.error("Video playback error:", e);
+    });
+    videoElement.load();
+  } else {
+    console.error("Video preview element not found in DOM");
+  }
+
+  // Download & Upload section - THIS IS WHAT YOU WANT
+  const downloadBtn = document.getElementById('cq-speaking-downloadBtn');
+  if (downloadBtn && blob) {
+    downloadBtn.style.display = 'inline-block';
+    downloadBtn.onclick = function() {
+      // Create a temporary link and trigger download
+      const url = URL.createObjectURL(blob);
+      const filename = `CertQuest_Response_${Date.now()}.webm`;
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 100);
+
+      // Show the upload box immediately after download click
+      document.getElementById('cq-speaking-uploadBox').style.display = 'block';
+    };
+  }
+
+  isRecording = false;
+};
+
+      cqSpeakingMediaRecorder.onerror = (event) => {
+        console.error("MediaRecorder error:", event.error);
+        alert("Recording error: " + event.error.message);
+        isRecording = false;
+      };
+      
+      // Start recording
+      cqSpeakingMediaRecorder.start(1000); // Collect data every second
+      isRecording = true;
+      console.log("Video recording started");
+      
+      // Show stop button
+      const stopBtn = document.getElementById('cq-speaking-stopBtn');
+      if (stopBtn) {
+        stopBtn.style.display = 'inline-block';
+        stopBtn.textContent = '⏹ Stop Video Recording';
+      }
+    })
+    .catch(error => {
+      console.error('Video recording error:', error);
+      let errorMessage = 'Failed to access camera/microphone: ';
+      if (error.name === 'NotAllowedError') {
+        errorMessage += 'Permission denied. Please allow camera and microphone access and try again.';
+      } else if (error.name === 'NotFoundError') {
+        errorMessage += 'No camera or microphone found.';
+      } else if (error.name === 'NotReadableError') {
+        errorMessage += 'Camera or microphone is already in use.';
+      } else {
+        errorMessage += error.message;
+      }
+      alert(errorMessage);
+      isRecording = false;
+    });
+  }
+
+  function stopRecording() {
+    console.log("Stopping recording...");
+    
+    if (!isRecording) {
+      console.log("No active recording to stop");
+      return;
+    }
+    
+    if (cqSpeakingMediaRecorder && cqSpeakingMediaRecorder.state !== "inactive") {
+      console.log("Stopping MediaRecorder, current state:", cqSpeakingMediaRecorder.state);
+      cqSpeakingMediaRecorder.stop();
+    }
+    
+    // Hide stop button
+    const stopBtn = document.getElementById('cq-speaking-stopBtn');
+    if (stopBtn) {
+      stopBtn.style.display = 'none';
+    }
+    
+    isRecording = false;
+  }
+
+  function cqSpeakingStopAllMedia() {
+    console.log("Stopping all media...");
+    
+    // Stop MediaRecorder
+    if (cqSpeakingMediaRecorder && cqSpeakingMediaRecorder.state !== "inactive") {
+      try {
+        cqSpeakingMediaRecorder.stop();
+      } catch (e) {
+        console.error("Error stopping MediaRecorder:", e);
+      }
+    }
+    
+    // Stop all media tracks
+    if (cqSpeakingMediaStream) {
+      cqSpeakingMediaStream.getTracks().forEach(track => {
+        track.stop();
+        console.log("Stopped track:", track.kind, track.label);
+      });
+      cqSpeakingMediaStream = null;
+    }
+    
+    // Clear recorded data
+    cqSpeakingRecordedChunks = [];
+    
+    // Hide stop button
+    const stopBtn = document.getElementById('cq-speaking-stopBtn');
+    if (stopBtn) {
+      stopBtn.style.display = 'none';
+    }
+    
+    // Reset video element
+    const videoElement = document.getElementById('cq-speaking-videoPreview');
+    if (videoElement) {
+      videoElement.srcObject = null;
+      videoElement.src = '';
+      videoElement.controls = false;
+    }
+    
+    isRecording = false;
+    console.log("All media stopped and cleaned up");
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    // Check recording support on page load
+    checkRecordingSupport();
+
+    // Assign global variables
+    modal = document.getElementById('goalModal');
+    backdrop = document.querySelector('.modal-backdrop');
+    goalSubmitBtn = document.getElementById('goalSubmitBtn');
+    compsInput = document.getElementById('comps');
+    goalCards = document.querySelectorAll('.goal-card');
+    isMentorCheckbox = document.getElementById('isMentor');
+    mentorCompDiv = document.getElementById('mentorCompDiv');
+    mentorCompInput = document.getElementById('mentorComp');
+    selectedGoal = null;
+
+    // Set up recording button event listeners
+    const audioBtn = document.getElementById('cq-speaking-audioBtn');
+    const videoBtn = document.getElementById('cq-speaking-videoBtn');
+    const stopBtn = document.getElementById('cq-speaking-stopBtn');
+    const submitBtn = document.getElementById('cq-speaking-submitBtn');
+    const closeBtn = document.querySelector('.cq-speaking-close');
+
+    if (audioBtn) {
+      audioBtn.addEventListener('click', startAudioRecording);
+    }
+    
+    if (videoBtn) {
+      videoBtn.addEventListener('click', startVideoRecording);
+    }
+    
+    if (stopBtn) {
+      stopBtn.addEventListener('click', stopRecording);
+    }
+    
+    if (submitBtn) {
+      submitBtn.addEventListener('click', submitSpeakingResponse);
+    }
+    
+    if (closeBtn) {
+      closeBtn.addEventListener('click', closeSpeakingAssignmentModal);
+    }
+
+    
+
+    // === DRAG AND DROP UPLOAD FUNCTIONALITY ===
+    let selectedUploadFile = null;
+
+    function setupDragAndDrop() {
+      const dropZone = document.getElementById('cq-speaking-dropZone');
+      const uploadInput = document.getElementById('cq-speaking-uploadInput');
+      const submitBtn = document.getElementById('cq-speaking-uploadSubmitBtn');
+      const dropZoneText = document.getElementById('cq-speaking-dropZone-text');
+
+      if (!dropZone || !uploadInput || !submitBtn || !dropZoneText) {
+        return; // Elements don't exist yet
+      }
+
+      // Click on dropZone opens file dialog
+      dropZone.addEventListener('click', (e) => {
+        e.preventDefault();
+        uploadInput.click();
+      });
+
+      // Drag over styling
+      dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.style.background = '#e0ebff';
+        dropZone.style.borderColor = '#1e40af';
+        dropZone.style.transform = 'scale(1.02)';
+      });
+
+      // Drag enter
+      dropZone.addEventListener('dragenter', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      });
+
+      // Drag leave styling
+      dropZone.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        // Only reset if we're leaving the dropZone itself
+        if (!dropZone.contains(e.relatedTarget)) {
+          dropZone.style.background = '#f3f6fd';
+          dropZone.style.borderColor = '#2563eb';
+          dropZone.style.transform = 'scale(1)';
+        }
+      });
+
+      // Drop handler
+      dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.style.background = '#f3f6fd';
+        dropZone.style.borderColor = '#2563eb';
+        dropZone.style.transform = 'scale(1)';
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          handleUploadFile(files[0]);
+        }
+      });
+
+      // File input change handler
+      uploadInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          handleUploadFile(file);
+        }
+      });
+
+      function handleUploadFile(file) {
+        console.log('File selected:', file.name, file.type, file.size);
+        
+        // Check file type
+        if (!file.type.startsWith('audio/') && !file.type.startsWith('video/')) {
+          dropZoneText.innerHTML = '❌ Please upload an audio or video file';
+          submitBtn.disabled = true;
+          
+          selectedUploadFile = null;
+          setTimeout(() => resetDropZone(), 3000);
+          return;
+        }
+
+        // Check file size (limit to 100MB)
+        const maxSize = 100 * 1024 * 1024; // 100MB
+        if (file.size > maxSize) {
+          dropZoneText.innerHTML = '❌ File too large (max 100MB)';
+          submitBtn.disabled = true;
+          selectedUploadFile = null;
+          setTimeout(() => resetDropZone(), 3000);
+          return;
+        }
+
+        // File is valid
+        selectedUploadFile = file;
+        dropZoneText.innerHTML = `✅ Selected: ${file.name}`;
+        submitBtn.disabled = false;
+      }
+
+      function resetDropZone() {
+        selectedUploadFile = null;
+        dropZoneText.textContent = 'Drop file here or click to select';
+        submitBtn.disabled = true;
+      }
+
+      // Set up upload submit button
+      submitBtn.addEventListener('click', async () => {
+  if (!selectedUploadFile) {
+    alert('Please select a file first');
+    return;
+  }
+
+
+  function markAllNotificationsRead() {
+    const notifications = document.querySelectorAll('.notification-item');
+    notifications.forEach(notif => {
+        notif.classList.add('read');
+    });
+    
+    // Hide the badge
+    const notificationBadge = document.querySelector('.nav-icons li a[onclick="toggleCommentPanel()"] .notification-badge');
+    if (notificationBadge) {
+        notificationBadge.style.display = 'none';
+    }
+}
+  submitBtn.textContent = 'Sending...';
+  submitBtn.disabled = true;
+
+  // --- Get mentee and assignment info ---
+  const user = firebase.auth().currentUser;
+  const menteeName = user?.displayName || user?.email || 'Anonymous';
+  const assignmentTitle = window.currentAssignment?.title || "Assignment";
+  
+  // --- Get mentor email ---
+  let mentorEmail = null;
+  if (window.currentAssignment && window.currentAssignment.mentorId) {
+    const mentorDoc = await db.collection('users').doc(window.currentAssignment.mentorId).get();
+    mentorEmail = mentorDoc.exists ? mentorDoc.data().email : null;
+  }
+  if (!mentorEmail) {
+    alert("Could not find mentor email.");
+    submitBtn.textContent = 'Send to Mentor';
+    submitBtn.disabled = false;
+    return;
+  }
+
+  try {
+    await sendAssignmentToMentor(selectedUploadFile, mentorEmail, menteeName, assignmentTitle);
+    alert('Sent to mentor!');
+    // Optionally, close modal or reset drag-and-drop
+    document.getElementById('cq-speaking-modal').style.display = 'none';
+    // Optionally: show confetti, etc.
+  } catch (error) {
+    alert("Failed to send: " + (error?.text || error?.message || error));
+  }
+  submitBtn.textContent = 'Send to Mentor';
+  submitBtn.disabled = false;
+});
+
+    }
+
+    // Call setup function
+    setupDragAndDrop();
+
+    function updateSaveState() {
+      goalSubmitBtn.disabled = !(
+        selectedGoal &&
+        compsInput.value.trim() &&
+        (!isMentorCheckbox.checked || mentorCompInput.value.trim())
+      );
+    }
+
+    goalCards.forEach(card => {
+      card.addEventListener('click', function() {
+        goalCards.forEach(c => c.classList.remove('selected'));
+        this.classList.add('selected');
+        selectedGoal = this.dataset.goal;
+        updateSaveState();
+      });
+    });
+    compsInput.addEventListener('input', updateSaveState);
+
+    // Mentor logic
+    if (isMentorCheckbox && mentorCompDiv && mentorCompInput) {
+      isMentorCheckbox.addEventListener('change', function() {
+        mentorCompDiv.style.display = isMentorCheckbox.checked ? 'block' : 'none';
+        updateSaveState();
+      });
+      mentorCompInput.addEventListener('input', updateSaveState);
+    }
+
+    goalSubmitBtn.addEventListener('click', function() {
+      if (
+        selectedGoal &&
+        compsInput.value.trim() &&
+        (!isMentorCheckbox.checked || mentorCompInput.value.trim())
+      ) {
+        document.getElementById('userComps').textContent = compsInput.value.trim();
+        const user = auth.currentUser;
+        if (user) {
+          // Parse competitions input as array, trim each, and remove blanks
+          const competitionsArr = compsInput.value
+            .split(',')
+            .map(x => x.trim())
+            .filter(Boolean);
+          db.collection('users').doc(user.uid).set({
+            competitions: competitionsArr,
+            isMentor: isMentorCheckbox.checked,
+            mentorCompetition: isMentorCheckbox.checked ? mentorCompInput.value.trim() : "",
+            studyGoalSet: true
+          }, { merge: true });
+        }
+        modal.style.display = 'none';
+        backdrop.style.display = 'none';
+      }
+    });
+
+    if (backdrop) {
+      backdrop.addEventListener('click', function() {
+        modal.style.display = 'none';
+        backdrop.style.display = 'none';
+      });
+    }
+
+    // ---- Show full name from Firestore and modal logic ----
+    auth.onAuthStateChanged(function(user) {
+      if (user) {
+        db.collection('users').doc(user.uid).get()
+          .then(function(doc) {
+            let fullName = user.displayName || (user.email ? user.email.split('@')[0] : 'User');
+            if (doc.exists && doc.data().name) {
+              fullName = doc.data().name;
+            }
+            document.getElementById('userName').textContent = fullName;
+
+            if (doc.exists && doc.data().competitions) {
+              document.getElementById('userComps').textContent = doc.data().competitions;
+            }
+
+            // DEBUG: See exactly what Firestore returns!
+            console.log("User doc.exists:", doc.exists);
+            console.log("User doc.data:", doc.data());
+            // Only show modal if not set (boolean false, undefined, or null)
+            if (!doc.exists || !doc.data().studyGoalSet) {
+              modal.style.display = 'block';
+              backdrop.style.display = 'block';
+            } else {
+              modal.style.display = 'none';
+              backdrop.style.display = 'none';
+            }
+          })
+          .catch(function(error) {
+            let fallbackName = user.displayName || (user.email ? user.email.split('@')[0] : 'User');
+            document.getElementById('userName').textContent = fallbackName;
+          });
+          setupNotifications();
+          // --- Mentor Comment Modal Check ---
+(async function checkMentorComments() {
+  try {
+    const snapshot = await db.collection('notifications')
+      .where('menteeId', '==', user.uid)
+      .where('read', '==', false)
+      .where('type', '==', 'mentorComment')  // Add this filter
+      .get();
+
+    snapshot.forEach(doc => {
+      const notif = doc.data();
+      console.log("Found mentor feedback notification:", notif); // Debug log
+      showMentorCommentModal(
+        notif.assignmentName || "Assignment",
+        notif.comment || notif.message || "No feedback provided.", // Try both fields
+        doc.id
+      );
+    });
+  } catch (err) {
+    console.error("Failed to check mentor comments:", err);
+  }
+})();
+
+      } else {
+        window.location.href = "/Public/index.html";
+      }
+    });
+
+    // ============ MEILISEARCH INTEGRATION ============
+    const client = new MeiliSearch({ host: 'http://127.0.0.1:7700' });
+    const index = client.index('content');
+    const searchBox = document.getElementById('navbarSearch');
+    const searchDropdown = document.getElementById('searchDropdown');
+    const searchIcon = document.getElementById('navbarSearchIcon');
+
+    if (searchBox && searchDropdown) {
+      searchBox.addEventListener('input', async function(e) {
+        const query = e.target.value.trim();
+        if (!query) {
+          searchDropdown.style.display = 'none';
+          searchDropdown.innerHTML = '';
+          return;
+        }
+        try {
+          const result = await index.search(query, { limit: 5 });
+          if (!result.hits.length) {
+            searchDropdown.style.display = 'none';
+            searchDropdown.innerHTML = '';
+            return;
+          }
+          searchDropdown.style.display = 'block';
+          searchDropdown.innerHTML = result.hits.map(doc => `
+            <div class="dropdown-result" tabindex="0" data-url="${doc.url}">
+              <b>${doc.title}</b><br>
+              <span style="font-size:12px;color:#888;">${doc.category || ''}${doc.tags ? ' | ' + doc.tags.join(', ') : ''}</span>
+            </div>
+          `).join('');
+        } catch (err) {
+          searchDropdown.style.display = 'none';
+          searchDropdown.innerHTML = '';
+        }
+      });
+
+      // Handle result click
+      searchDropdown.addEventListener('click', function(e) {
+        const target = e.target.closest('.dropdown-result');
+        if (target && target.dataset.url) {
+          window.location = target.dataset.url;
+        }
+      });
+
+      // Optional: Allow Enter key to open first result
+      searchBox.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && searchDropdown.innerHTML) {
+          const first = searchDropdown.querySelector('.dropdown-result');
+          if (first && first.dataset.url) {
+            window.location = first.dataset.url;
+          }
+        }
+      });
+
+      // Hide dropdown on outside click
+      document.addEventListener('click', function(e) {
+        if (!searchBox.contains(e.target) && !searchDropdown.contains(e.target)) {
+          searchDropdown.style.display = 'none';
+        }
+      });
+
+      // Click magnifier icon triggers search
+      if (searchIcon) {
+        searchIcon.addEventListener('click', () => {
+          searchBox.dispatchEvent(new Event('input'));
+        });
+      }
+    }
+
+    // === REALTIME ASSIGNMENT LISTENER ===
+    auth.onAuthStateChanged(function(user) {
+      if (!user) return;
+      
+      
+      console.log("Setting up assignment listener for user:", user.uid);
+      
+      db.collection('assignments')
+        .where('to', '==', user.uid)
+        .where('status', '==', 'assigned')
+        .onSnapshot(snapshot => {
+          console.log("Assignment snapshot received:", snapshot.size, "documents");
+          
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            console.log("Assignment data:", data);
+            
+            if (data.status === "assigned") {
+              showAssignmentModal(data, doc.id);
+            }
+          });
+        }, error => {
+          console.error("Assignment listener error:", error);
+        });
+    });
+  });
+
+  // === ASSIGNMENT MODAL FUNCTIONS ===
+ function showAssignmentModal(assignment, docId) {
+    console.log("showAssignmentModal called with:", assignment, docId);
+    
+    // Set the global assignment ID for later use
+    window.latestAssignmentId = docId;
+    window.currentAssignment = assignment;
+    
+    // Create notification content
+    const notificationTitle = "New Assignment: " + (assignment.title || "Assignment");
+    let notificationContent = "";
+    
+    if (assignment.type === "speaking" || assignment.type === "case") {
+        notificationContent = `Type: ${assignment.type === "speaking" ? "Speaking" : "Case"} Assignment\n`;
+        notificationContent += `Competencies: ${assignment.competencies ? assignment.competencies.join(', ') : 'n/a'}\n`;
+        notificationContent += `Questions:\n${assignment.questions ? assignment.questions.join('\n') : 'n/a'}`;
+    } else {
+        notificationContent = `
+            Time: ${assignment.time || 'n/a'}
+            Competencies: ${assignment.competencies ? assignment.competencies.join(', ') : 'n/a'}
+            Questions: ${assignment.questions || 'n/a'}
+            Difficulty: ${assignment.difficulty || 'n/a'}
+        `;
+    }
+    
+    // Show notification with full details
+    showNotification(notificationTitle, notificationContent, () => {
+        // When clicked, open the full modal with all details
+        openFullAssignmentModal(assignment);
+    });
+    
+    // Mark assignment as seen (but not completed)
+    db.collection('assignments').doc(docId).update({
+        status: "seen"
+    }).catch(error => {
+        console.error("Error updating assignment status:", error);
+    });
+}
+
+function openFullAssignmentModal(assignment) {
+    // Set the modal title
+    document.getElementById('cq-assignment-title').innerText = assignment.title || "New Assignment";
+    
+    // Show info section, hide quiz section
+    document.getElementById('cq-assignment-info').style.display = 'block';
+    document.getElementById('cq-assignment-quiz').style.display = 'none';
+    
+    // Fill in all assignment details
+    const fieldsElement = document.getElementById('cq-assignment-fields');
+    if (fieldsElement) {
+        if (assignment.type === "speaking" || assignment.type === "case") {
+            // Speaking/Case assignment format
+            const q1 = assignment.questions && assignment.questions[0] ? assignment.questions[0] : "No question provided";
+            const q2 = assignment.questions && assignment.questions[1] ? assignment.questions[1] : "No question provided";
+            
+            fieldsElement.innerHTML = `
+                <div><b>Type:</b> ${assignment.type === "speaking" ? "Speaking" : "Case"} Assignment</div>
+                <div><b>Competencies:</b> ${assignment.competencies ? assignment.competencies.join(', ') : 'n/a'}</div>
+                <div><b>Description:</b> ${assignment.description || 'n/a'}</div>
+                <div><b>Questions:</b></div>
+                <ul>
+                    <li>${q1}</li>
+                    <li>${q2}</li>
+                </ul>
+            `;
+        } else {
+            // Regular assignment format
+            fieldsElement.innerHTML = `
+                <div><b>Time:</b> ${assignment.time || 'n/a'}</div>
+                <div><b>Competencies:</b> ${assignment.competencies ? assignment.competencies.join(', ') : 'n/a'}</div>
+                <div><b>Questions:</b><br> <span style="font-weight:400; color:#333">${assignment.questions || 'n/a'}</span></div>
+                <div><b>Difficulty:</b> ${assignment.difficulty || 'n/a'}</div>
+                <div><b>Simulate:</b> ${assignment.simulate ? "Yes" : "No"}</div>
+            `;
+        }
+    }
+    
+    // Show the modal
+    document.getElementById('cq-assignment-modal').style.display = 'block';
+}
+
+  function showSpeakingAssignmentInfo(assignment, docId) {
+    // Store for later use
+    window.latestAssignmentId = docId;
+    window.currentAssignment = assignment;
+    
+    // Set title
+    document.getElementById('cq-assignment-title').innerText = assignment.title || "Speaking Assignment";
+    
+    // Hide quiz, show info
+    document.getElementById('cq-assignment-info').style.display = 'block';
+    document.getElementById('cq-assignment-quiz').style.display = 'none';
+    
+    // Fill in assignment fields for speaking
+    document.getElementById('cq-assignment-fields').innerHTML = `
+      <div><b>Type:</b> Speaking Assignment</div>
+      <div><b>Time:</b> ${assignment.time || 'n/a'}</div>
+      <div><b>Competencies:</b> ${assignment.competencies ? assignment.competencies.join(', ') : 'n/a'}</div>
+      <div><b>Description:</b><br> <span style="font-weight:400; color:#333">${assignment.description || assignment.questions || 'Practice your speaking skills'}</span></div>
+      <div><b>Question 1:</b> ${assignment.question1 || 'No question provided'}</div>
+      <div><b>Question 2:</b> ${assignment.question2 || 'No question provided'}</div>
+    `;
+    
+    // Show the assignment modal (same as regular assignments)
+    document.getElementById('cq-assignment-modal').style.display = 'block';
+  }
+
+function acceptAssignmentNow() {
+    const assignment = window.currentAssignment;
+    
+    if (!assignment) {
+        console.error("No current assignment found");
+        return;
+    }
+    
+    // Handle speaking/case assignments (unchanged)
+    if (assignment.type === 'speaking' || assignment.type === 'case') {
+        document.getElementById('cq-assignment-modal').style.display = 'none';
+        const q1 = assignment.questions && assignment.questions[0] ? assignment.questions[0] : "No question provided";
+        const q2 = assignment.questions && assignment.questions[1] ? assignment.questions[1] : "No question provided";
+        openSpeakingAssignmentModal(q1, q2);
+        return;
+    }
+
+    // Transition to quiz view (unchanged)
+    document.getElementById('cq-assignment-info').style.display = 'none';
+    document.getElementById('cq-assignment-quiz').style.display = 'block';
+
+    // Set quiz metadata (unchanged)
+    const assignmentTitle = document.getElementById('cq-assignment-title').textContent;
+    document.getElementById('quizDifficulty').textContent = 'Difficulty: ' + (assignment.difficulty || 'Medium');
+    document.getElementById('quizTime').textContent = 'Time: ' + (assignment.time || '10 mins');
+
+    // Render quiz questions with competency data attributes
+    renderQuiz(quizQuestions);
+
+    // Enable submit only when all questions are answered (unchanged)
+    const radioInputs = document.querySelectorAll('#cq-assignment-quiz input[type="radio"]');
+    const submitBtn = document.getElementById('submitQuizBtn');
+    submitBtn.disabled = true;
+
+    radioInputs.forEach(input => {
+        input.addEventListener('change', () => {
+            const allAnswered = quizQuestions.every((_, idx) => 
+                document.querySelector(`input[name="q${idx+1}"]:checked`));
+            submitBtn.disabled = !allAnswered;
+        });
+    });
+
+    // Enhanced submit button handler
+    submitBtn.onclick = async function() {
+        if (!window.latestAssignmentId) return;
+
+        // Calculate competency breakdown
+        const competencyStats = {};
+        let totalCorrect = 0;
+
+        quizQuestions.forEach((question, idx) => {
+            const userAnswer = document.querySelector(`input[name="q${idx+1}"]:checked`);
+            const isCorrect = userAnswer && userAnswer.value === question.correctAnswer;
+            
+            // Initialize competency if not exists
+            if (!competencyStats[question.competency]) {
+                competencyStats[question.competency] = {
+                    total: 0,
+                    correct: 0,
+                    questions: []
+                };
+            }
+            
+            // Update competency stats
+            competencyStats[question.competency].total++;
+            if (isCorrect) {
+                competencyStats[question.competency].correct++;
+                totalCorrect++;
+            }
+            
+            // Store question details
+            competencyStats[question.competency].questions.push({
+                question: question.text,
+                userAnswer: userAnswer ? userAnswer.value : null,
+                isCorrect: isCorrect,
+                correctAnswer: question.correctAnswer
+            });
+        });
+
+        // Prepare Firestore update data
+        const updateData = {
+            status: "complete",
+            completedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            score: totalCorrect,
+            totalQuestions: quizQuestions.length,
+            competencyStats: competencyStats,
+            competencies: Object.keys(competencyStats),
+            // Maintain your existing correctCompetencies field
+            correctCompetencies: Object.entries(competencyStats)
+                .filter(([_, stats]) => stats.correct === stats.total)
+                .map(([comp, _]) => comp)
+        };
+
+        try {
+            await db.collection('assignments').doc(window.latestAssignmentId).update(updateData);
+            
+            closeAssignmentModal();
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+            
+            // Enhanced results display
+            showCongratsModal({
+                message: `Great job! You scored ${totalCorrect}/${quizQuestions.length}`,
+                assignmentName: assignmentTitle,
+                competencies: Object.keys(competencyStats),
+                competencyStats: competencyStats  // Pass full stats for detailed display
+            });
+            
+            window.latestAssignmentId = null;
+            window.currentAssignment = null;
+            
+        } catch (error) {
+            console.error("Quiz submission error:", error);
+            alert("Failed to submit quiz: " + error.message);
+        }
+    };
+}
+
+  function closeAssignmentModal() {
+    document.getElementById('cq-assignment-modal').style.display = 'none';
+  }
+
+  function snoozeAssignment() {
+    closeAssignmentModal(); // Status remains "assigned"
+  }
+
+  // === SPEAKING ASSIGNMENT FUNCTIONS ===
+  function openSpeakingAssignmentModal(q1, q2) {
+    document.getElementById('cq-speaking-q1').textContent = q1 || "Question 1 here";
+    document.getElementById('cq-speaking-q2').textContent = q2 || "Question 2 here";
+    document.getElementById('cq-speaking-modal').style.display = 'flex';
+    // Hide previews and stop button initially
+    document.getElementById('cq-speaking-videoPreview').style.display = 'none';
+    document.getElementById('cq-speaking-audioPlayback').style.display = 'none';
+    document.getElementById('cq-speaking-stopBtn').style.display = 'none';
+    cqSpeakingRecordedChunks = [];
+  }
+
+  function closeSpeakingAssignmentModal() {
+    document.getElementById('cq-speaking-downloadBtn').style.display = 'none';
+
+    // Stop any active recordings
+    cqSpeakingStopAllMedia();
+    
+    // Hide modal
+    document.getElementById('cq-speaking-modal').style.display = 'none';
+    
+    // Mark as seen (if assignment exists)
+    if (window.latestAssignmentId) {
+      db.collection('assignments').doc(window.latestAssignmentId)
+        .update({ status: "seen" })
+        .then(() => {
+          window.latestAssignmentId = null;
+          window.currentAssignment = null;
+        })
+        .catch(error => {
+          console.error("Error updating assignment status:", error);
+        });
+    }
+  }
+
+
+async function submitSpeakingResponse() {
+  console.log("SubmitSpeakingResponse clicked!", window.latestAssignmentId);
+
+  if (!window.latestAssignmentId) {
+    document.getElementById('cq-speaking-modal').style.display = 'none';
+    return;
+  }
+
+  try {
+    // Just update Firestore, mark as complete
+    await firebase.firestore().collection('assignments').doc(window.latestAssignmentId).update({
+      status: "complete",
+      completedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    // Show success UI
+    document.getElementById('cq-speaking-modal').style.display = 'none';
+    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+    showCongratsModal({
+      message: `Great job completing the speaking assignment!`,
+      assignmentName: window.currentAssignment ? window.currentAssignment.title : "Assignment"
+    });
+    window.latestAssignmentId = null;
+    window.currentAssignment = null;
+  } catch (error) {
+    console.error("Error marking assignment complete:", error);
+    alert("Failed to submit assignment: " + error.message);
+  }
+}
+
+
+async function sendAssignmentToMentor(selectedUploadFile, mentorEmail, menteeName, assignmentTitle) {
+  const base64File = await fileToBase64(selectedUploadFile);
+  const templateParams = {
+    to_email: mentorEmail,
+    from_name: menteeName,
+    assignment_title: assignmentTitle,
+    'attachment': {
+      content: base64File,
+      filename: selectedUploadFile.name,
+    }
+  };
+
+  return emailjs.send('service_hgoj8aa', 'template_6ap351c', templateParams);
+}
+
+
+
+  // === NOTIFICATION FUNCTIONS ===
+ function setupNotifications() {
+  const user = auth.currentUser;
+  if (!user) {
+    console.log("No user logged in");
+    return;
+  }
+
+  console.log("Setting up notifications for user:", user.uid);
+
+  db.collection('notifications')
+    .where('menteeId', '==', user.uid)
+    .where('showModal', '==', true)
+    .where('read', '==', false)
+    .orderBy('timestamp', 'desc')
+    .onSnapshot((snapshot) => {
+      console.log("Received notifications snapshot with", snapshot.size, "items");
+      
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === "added") {
+          console.log("New notification received:", change.doc.data());
+          showCongratsModal(change.doc.data());
+          
+          // ONLY mark showModal as false to prevent re-showing
+          // DON'T mark as read - let user dismiss manually
+          setTimeout(() => {
+            change.doc.ref.update({
+              showModal: false  // Remove this line: read: true,
+            });
+          }, 1000);
+        }
+      });
+    }, (error) => {
+      console.error("Notifications error:", error);
+    });
+
+  // NEW: Load ALL notifications (read and unread) for the notification panel
+  // REMOVED the showModal filter so notifications persist after reload
+  db.collection('notifications')
+    .where('menteeId', '==', user.uid)
+    .orderBy('timestamp', 'desc')
+    .limit(20) // Show last 20 notifications
+    .onSnapshot((snapshot) => {
+      const notificationList = document.getElementById("notificationList");
+      if (!notificationList) return;
+      
+      notificationList.innerHTML = ''; // Clear existing
+      
+      snapshot.forEach((doc) => {
+        const notif = doc.data();
+        const item = document.createElement("div");
+        item.className = `notification-item ${notif.read ? 'read' : ''}`;
+        
+        // Format timestamp
+        let timeText = "Just now";
+        if (notif.timestamp && notif.timestamp.toDate) {
+          const date = notif.timestamp.toDate();
+          const now = new Date();
+          const diffMs = now - date;
+          const diffMins = Math.floor(diffMs / 60000);
+          const diffHours = Math.floor(diffMs / 3600000);
+          const diffDays = Math.floor(diffMs / 86400000);
+          
+          if (diffMins < 1) timeText = "Just now";
+          else if (diffMins < 60) timeText = `${diffMins}m ago`;
+          else if (diffHours < 24) timeText = `${diffHours}h ago`;
+          else timeText = `${diffDays}d ago`;
+        }
+        
+        item.innerHTML = `
+          <div class="notification-header">
+            <strong>${notif.message || 'Notification'}</strong>
+            <span class="notification-time">${timeText}</span>
+          </div>
+          <div class="notification-body">
+            Assignment: ${notif.assignmentName || 'Unknown'}
+            ${notif.score !== undefined ? `<br>Score: ${notif.score}/${notif.totalQuestions}` : ''}
+          </div>
+        `;
+        
+        // Mark as read when clicked
+        item.addEventListener("click", () => {
+          if (!notif.read) {
+            doc.ref.update({ read: true });
+          }
+          item.classList.add("read");
+        });
+        
+        notificationList.appendChild(item);
+      });
+      
+      // Update notification badge count
+      const unreadCount = snapshot.docs.filter(doc => !doc.data().read).length;
+      const notificationBadge = document.querySelector('.nav-icons li a[onclick="toggleCommentPanel()"] .notification-badge');
+      if (notificationBadge) {
+        if (unreadCount > 0) {
+          notificationBadge.style.display = 'inline-block';
+          notificationBadge.textContent = unreadCount;
+        } else {
+          notificationBadge.style.display = 'none';
+        }
+      }
+    });
+}
+
+// ADD this new function to mark all notifications as read:
+function markAllNotificationsRead() {
+  const user = auth.currentUser;
+  if (!user) return;
+  
+  db.collection('notifications')
+    .where('menteeId', '==', user.uid)
+    .where('read', '==', false)
+    .get()
+    .then((snapshot) => {
+      const batch = db.batch();
+      snapshot.forEach((doc) => {
+        batch.update(doc.ref, { read: true });
+      });
+      return batch.commit();
+    })
+    .then(() => {
+      console.log("All notifications marked as read");
+      // Hide the badge
+      const notificationBadge = document.querySelector('.nav-icons li a[onclick="toggleCommentPanel()"] .notification-badge');
+      if (notificationBadge) {
+        notificationBadge.style.display = 'none';
+      }
+    })
+    .catch((error) => {
+      console.error("Error marking notifications as read:", error);
+    });
+}
+
+// Make the function globally available
+window.markAllNotificationsRead = markAllNotificationsRead;
+
+function showCongratsModal(notification) {
+  const modal = document.getElementById('congratsModal');
+  const content = modal.querySelector('.cq-modal-fields');
+  
+  // Enhanced to handle both simple and detailed competency data
+  let competenciesHTML = '';
+  
+  // Case 1: Detailed competency stats (from quiz)
+  if (notification.competencyStats) {
+    competenciesHTML = `
+      <div style="margin-top:1.25rem;">
+        <b>Competency Breakdown:</b>
+        ${Object.entries(notification.competencyStats).map(([comp, stats]) => `
+          <div style="margin-top:0.5rem;">
+            <div>${comp}: ${stats.correct}/${stats.total} correct</div>
+            <div style="height:6px; background:#e2e8f0; border-radius:3px; margin-top:2px;">
+              <div style="height:100%; width:${(stats.correct/stats.total)*100}%; background:#4ade80; border-radius:3px;"></div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  } 
+  // Case 2: Simple competency list (from other assignments)
+  else if (notification.competencies && notification.competencies.length) {
+    competenciesHTML = `
+      <div style="margin-top:1.25rem;">
+        <b>Competencies Mastered:</b>
+        <ul style="margin-top:0.25rem;">
+          ${notification.competencies.map(c => `<li>${c}</li>`).join('')}
+        </ul>
+      </div>
+    `;
+  }
+
+  content.innerHTML = `
+    <div style="text-align:center; padding:1rem;">
+      <div style="font-size:1.25rem; margin-bottom:1rem;">
+        ${notification.message || 'Your mentor congratulated you!'}
+      </div>
+      <div style="font-size:0.9rem; color:#666; margin-bottom:0.5rem;">
+        For completing: <strong>${notification.assignmentName || 'an assignment'}</strong>
+      </div>
+      ${notification.score !== undefined ? `
+        <div style="font-size:1.1rem; font-weight:600; margin:0.5rem 0;">
+          Score: ${notification.score}/${notification.totalQuestions}
+        </div>
+      ` : ''}
+      ${competenciesHTML}
+    </div>
+  `;
+  
+  modal.style.display = 'block';
+  confetti({
+    particleCount: 150,
+    spread: 70,
+    origin: { y: 0.6 },
+    colors: ['#2563eb', '#1e40af', '#1e3a8a']
+  });
+}
+
+function closeCongratsModal() {
+  document.getElementById('congratsModal').style.display = 'none';
+}
+
+// ... rest of your code ...
+
+  console.log("🔥 Firebase initialized and script loaded successfully");
+
+ function toggleCommentPanel() {
+  document.getElementById("commentPanel").classList.toggle("active");
+}
+
+window.toggleCommentPanel = toggleCommentPanel;
+
+ 
+
+</script>
+
+
+
+</body>
+</html>

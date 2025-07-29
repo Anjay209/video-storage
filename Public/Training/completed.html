@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CertQuest Dashboard</title>
+  <link rel="stylesheet" href="completed.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Top Nav -->
+  <div class="top-header">
+    <div class="nav-left">🌐</div>
+    <div class="nav-title">Dashboard <span class="new-badge">(New!)</span></div>
+    <div class="nav-right">
+  <input type="text" id="navbarSearch" placeholder="Search CertQuest..." />
+  <span class="search-icon" id="navbarSearchIcon">🔍</span>
+  <div id="searchDropdown"></div>
+</div>
+  </div>
+
+  <div class="main-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">CQ</div>
+        <ul class="nav-icons">
+          <li>
+            🏠
+            <span class="nav-label">Dashboard</span>
+          </li>
+          <li>
+            📊
+            <span class="nav-label">Stats</span>
+          </li>
+          <li>
+            🎯
+            <span class="nav-label">Goals</span>
+          </li>
+          <li>
+            📅
+            <span class="nav-label">Schedule</span>
+          </li>
+          <li>
+            ⚙️
+            <span class="nav-label">Settings</span>
+          </li>
+        </ul>
+      </aside>
+
+      
+      <section class="tutor-trainings">
+        <div class="header-section">
+        <span class="heading">Mentor Training</span>
+        <p class="subtext">Boost your tutoring skills with these tips, strategies, and guides. When you're done, refresh concepts by reviewing completed trainings!</p>
+    </div>
+        <div class="tab-wrapper">
+            <div class="tabs">
+              <button class="tab" id="incompleteTab">Incomplete</button>
+              <button class="tab active">Completed</button>
+            </div>
+          </div>
+        
+            <div class="training-grid">
+          <div class="training-card" data-module="intro-bm">
+            <div class="badge completed">COMPLETED</div>
+            <h4>Data Protection</h4>
+            <p>In this training, you'll learn how to protect data that you may interact with as a volunteer at Schoolhouse.</p>
+            <div class="training-meta">
+              <span class="skill">SKILL BUILDER</span>
+              <span class="time">10 mins</span>
+              <span class="sp">+10 SP</span>
+            </div>
+          </div>
+          <div class="training-card" data-module="marketing-101">
+            <div class="badge completed">COMPLETED</div>
+            <h4>Data Protection</h4>
+            <p>In this training, you'll learn how to protect data that you may interact with as a volunteer at Schoolhouse.</p>
+            <div class="training-meta">
+              <span class="skill">SKILL BUILDER</span>
+              <span class="time">10 mins</span>
+              <span class="sp">+10 SP</span>
+            </div>
+          </div>
+          <div class="training-card">
+            <div class="badge completed">COMPLETED</div>
+            <h4>Data Protection</h4>
+            <p>In this training, you'll learn how to protect data that you may interact with as a volunteer at Schoolhouse.</p>
+            <div class="training-meta">
+              <span class="skill">SKILL BUILDER</span>
+              <span class="time">10 mins</span>
+              <span class="sp">+10 SP</span>
+            </div>
+          </div>
+          <div class="training-card">
+            <div class="badge completed">COMPLETED</div>
+            <h4>Data Protection</h4>
+            <p>In this training, you'll learn how to protect data that you may interact with as a volunteer at Schoolhouse.</p>
+            <div class="training-meta">
+              <span class="skill">SKILL BUILDER</span>
+              <span class="time">10 mins</span>
+              <span class="sp">+10 SP</span>
+            </div>
+          </div>
+          <div class="training-card">
+            <div class="badge completed">COMPLETED</div>
+            <h4>Data Protection</h4>
+            <p>In this training, you'll learn how to protect data that you may interact with as a volunteer at Schoolhouse.</p>
+            <div class="training-meta">
+              <span class="skill">SKILL BUILDER</span>
+              <span class="time">10 mins</span>
+              <span class="sp">+10 SP</span>
+            </div>
+          </div>
+          <div class="training-card">
+            <div class="badge completed">COMPLETED</div>
+            <h4>Data Protection</h4>
+            <p>In this training, you'll learn how to protect data that you may interact with as a volunteer at Schoolhouse.</p>
+            <div class="training-meta">
+              <span class="skill">SKILL BUILDER</span>
+              <span class="time">10 mins</span>
+              <span class="sp">+10 SP</span>
+            </div>
+          </div>
+          
+        </div>
+      </section>
+    </div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/meilisearch@latest/dist/bundles/meilisearch.umd.min.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const incompleteTab = document.getElementById("incompleteTab");
+
+  if (incompleteTab) {
+    incompleteTab.addEventListener("click", () => {
+      window.location.href = "training.html"; // 🔁 Change path if needed
+    });
+  }
+});
+// ============ MEILISEARCH INTEGRATION ============
+    // Meilisearch client setup (adjust if you use a different host)
+    const client = new MeiliSearch({ host: 'http://127.0.0.1:7700' });
+    const index = client.index('content');
+    const searchBox = document.getElementById('navbarSearch');
+    const searchDropdown = document.getElementById('searchDropdown');
+    const searchIcon = document.getElementById('navbarSearchIcon');
+
+    if (searchBox && searchDropdown) {
+      searchBox.addEventListener('input', async function(e) {
+        const query = e.target.value.trim();
+        if (!query) {
+          searchDropdown.style.display = 'none';
+          searchDropdown.innerHTML = '';
+          return;
+        }
+        try {
+          const result = await index.search(query, { limit: 5 });
+          if (!result.hits.length) {
+            searchDropdown.style.display = 'none';
+            searchDropdown.innerHTML = '';
+            return;
+          }
+          searchDropdown.style.display = 'block';
+          searchDropdown.innerHTML = result.hits.map(doc => `
+            <div class="dropdown-result" tabindex="0" data-url="${doc.url}">
+              <b>${doc.title}</b><br>
+              <span style="font-size:12px;color:#888;">${doc.category || ''}${doc.tags ? ' | ' + doc.tags.join(', ') : ''}</span>
+            </div>
+          `).join('');
+        } catch (err) {
+          searchDropdown.style.display = 'none';
+          searchDropdown.innerHTML = '';
+        }
+      });
+
+      // Handle result click
+      searchDropdown.addEventListener('click', function(e) {
+        const target = e.target.closest('.dropdown-result');
+        if (target && target.dataset.url) {
+          window.location = target.dataset.url;
+        }
+      });
+
+      // Optional: Allow Enter key to open first result
+      searchBox.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && searchDropdown.innerHTML) {
+          const first = searchDropdown.querySelector('.dropdown-result');
+          if (first && first.dataset.url) {
+            window.location = first.dataset.url;
+          }
+        }
+      });
+
+      // Hide dropdown on outside click
+      document.addEventListener('click', function(e) {
+        if (!searchBox.contains(e.target) && !searchDropdown.contains(e.target)) {
+          searchDropdown.style.display = 'none';
+        }
+      });
+
+      // Click magnifier icon triggers search
+      if (searchIcon) {
+        searchIcon.addEventListener('click', () => {
+          searchBox.dispatchEvent(new Event('input'));
+        });
+      }
+    }
+    // =========== END MEILISEARCH ============
+</script>
+
+
+</body>
+</html>

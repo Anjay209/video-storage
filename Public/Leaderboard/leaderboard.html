@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CertQuest Dashboard</title>
+  <link rel="stylesheet" href="leaderboard.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Top Nav -->
+  <div class="top-header">
+    <div class="nav-left">🌐</div>
+    <div class="nav-title">Dashboard <span class="new-badge">(New!)</span></div>
+    <div class="nav-right">
+  <input type="text" id="navbarSearch" placeholder="Search CertQuest..." />
+  <span class="search-icon" id="navbarSearchIcon">🔍</span>
+  <div id="searchDropdown"></div>
+</div>
+  </div>
+
+  <div class="main-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">CQ</div>
+        <ul class="nav-icons">
+          <li>
+            🏠
+            <span class="nav-label">Dashboard</span>
+          </li>
+          <li>
+            📊
+            <span class="nav-label">Stats</span>
+          </li>
+          <li>
+            🎯
+            <span class="nav-label">Goals</span>
+          </li>
+          <li>
+            📅
+            <span class="nav-label">Schedule</span>
+          </li>
+          <li>
+            ⚙️
+            <span class="nav-label">Settings</span>
+          </li>
+        </ul>
+      </aside>
+      <div class="container">
+        <span class="title">Leaderboards</span>
+        <p class="subtitle">
+          See where you stand and climb the ranks at Schoolhouse! Get on the leaderboard by gaining SP (Schoolhouse Points), joining sessions, and more.
+        </p>
+        <div class="tabs">
+          <button class="active">This week</button>
+          <button>This month</button>
+          <button>All time</button>
+        </div>
+    
+        <!-- Leaderboards -->
+      <section style="display:flex; gap:2rem; flex-wrap:wrap;">
+        <!-- Learners -->
+        <div class="board">
+          <h2 style="margin-bottom:1rem;">Most SP (Learners)</h2>
+          <ol style="list-style:none; padding:0; margin:0;">
+            <li style="padding:0.5rem 0; display:flex; justify-content:space-between; align-items:center;">
+              <div><span>🥇</span> Isaac T</div>
+              <div style="font-weight:bold;">190 SP</div>
+            </li>
+            <li style="padding:0.5rem 0; display:flex; justify-content:space-between; align-items:center;">
+              <div><span>🥈</span> Sam S</div>
+              <div style="font-weight:bold;">175 SP</div>
+            </li>
+            <li style="padding:0.5rem 0; display:flex; justify-content:space-between; align-items:center;">
+              <div><span>🥉</span> Emma L</div>
+              <div style="font-weight:bold;">155 SP</div>
+            </li>
+            <li style="padding:0.5rem 0; display:flex; justify-content:space-between; align-items:center;">
+              <div>Cadence B</div>
+              <div style="font-weight:bold;">155 SP</div>
+            </li>
+            <li style="padding:0.5rem 0; display:flex; justify-content:space-between; align-items:center;">
+                <div>Cadence B</div>
+                <div style="font-weight:bold;">155 SP</div>
+              </li>
+              <li style="padding:0.5rem 0; display:flex; justify-content:space-between; align-items:center;">
+                <div>Cadence B</div>
+                <div style="font-weight:bold;">155 SP</div>
+              </li>
+              <li style="padding:0.5rem 0; display:flex; justify-content:space-between; align-items:center;">
+                  <div>Cadence B</div>
+                  <div style="font-weight:bold;">155 SP</div>
+                </li>
+                <li style="padding:0.5rem 0; display:flex; justify-content:space-between; align-items:center;">
+                    <div>Cadence B</div>
+                    <div style="font-weight:bold;">155 SP</div>
+                  </li>
+                  <li style="padding:0.5rem 0; display:flex; justify-content:space-between; align-items:center;">
+                      <div>Cadence B</div>
+                      <div style="font-weight:bold;">155 SP</div>
+                    </li>
+                    <li style="padding:0.5rem 0; display:flex; justify-content:space-between; align-items:center;">
+                        <div>Cadence B</div>
+                        <div style="font-weight:bold;">155 SP</div>
+                      </li>
+          </ol>
+        </div>
+
+        <!-- Tutors -->
+        <div class="board">
+          <h2 style="margin-bottom:1rem;">Most SP (Tutors)</h2>
+          <ol style="list-style:none; padding:0; margin:0;">
+            <li style="padding:0.5rem 0; display:flex; justify-content:space-between; align-items:center;">
+              <div><span>🥇</span> Long T</div>
+              <div style="font-weight:bold;">1348 SP</div>
+            </li>
+            <li style="padding:0.5rem 0; display:flex; justify-content:space-between; align-items:center;">
+              <div><span>🥈</span> Thomas S</div>
+              <div style="font-weight:bold;">302 SP</div>
+            </li>
+            <li style="padding:0.5rem 0; display:flex; justify-content:space-between; align-items:center;">
+              <div><span>🥉</span> Sanjana S</div>
+              <div style="font-weight:bold;">291 SP</div>
+            </li>
+            
+              <li style="padding:0.5rem 0; display:flex; justify-content:space-between; align-items:center;">
+                <div>Cadence B</div>
+                <div style="font-weight:bold;">155 SP</div>
+              </li>
+              <li style="padding:0.5rem 0; display:flex; justify-content:space-between; align-items:center;">
+                <div>Cadence B</div>
+                <div style="font-weight:bold;">155 SP</div>
+              </li>
+              <li style="padding:0.5rem 0; display:flex; justify-content:space-between; align-items:center;">
+                <div>Cadence B</div>
+                <div style="font-weight:bold;">155 SP</div>
+              </li>
+              <li style="padding:0.5rem 0; display:flex; justify-content:space-between; align-items:center;">
+                  <div>Cadence B</div>
+                  <div style="font-weight:bold;">155 SP</div>
+                </li>
+                <li style="padding:0.5rem 0; display:flex; justify-content:space-between; align-items:center;">
+                    <div>Cadence B</div>
+                    <div style="font-weight:bold;">155 SP</div>
+                  </li>
+                  <li style="padding:0.5rem 0; display:flex; justify-content:space-between; align-items:center;">
+                      <div>Cadence B</div>
+                      <div style="font-weight:bold;">155 SP</div>
+                    </li>
+                    <li style="padding:0.5rem 0; display:flex; justify-content:space-between; align-items:center;">
+                        <div>Cadence B</div>
+                        <div style="font-weight:bold;">155 SP</div>
+                      </li>
+          </ol>
+        </div>
+      </section>
+  </div>
+  <canvas id="confetti-canvas"></canvas>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/meilisearch@latest/dist/bundles/meilisearch.umd.min.js"></script>
+
+  <script>
+    window.onload = () => {
+    const canvas = document.getElementById('confetti-canvas');
+    const myConfetti = confetti.create(canvas, { resize: true });
+
+    myConfetti({
+      particleCount: 500,
+      spread: 80,
+      origin: { y: 1.0 },
+      startVelocity: 140,
+      gravity: 0,             // no falling
+  ticks: 50000000           // freeze in place for a long time
+    });
+  };
+
+  // ============ MEILISEARCH INTEGRATION ============
+    // Meilisearch client setup (adjust if you use a different host)
+    const client = new MeiliSearch({ host: 'http://127.0.0.1:7700' });
+    const index = client.index('content');
+    const searchBox = document.getElementById('navbarSearch');
+    const searchDropdown = document.getElementById('searchDropdown');
+    const searchIcon = document.getElementById('navbarSearchIcon');
+
+    if (searchBox && searchDropdown) {
+      searchBox.addEventListener('input', async function(e) {
+        const query = e.target.value.trim();
+        if (!query) {
+          searchDropdown.style.display = 'none';
+          searchDropdown.innerHTML = '';
+          return;
+        }
+        try {
+          const result = await index.search(query, { limit: 5 });
+          if (!result.hits.length) {
+            searchDropdown.style.display = 'none';
+            searchDropdown.innerHTML = '';
+            return;
+          }
+          searchDropdown.style.display = 'block';
+          searchDropdown.innerHTML = result.hits.map(doc => `
+            <div class="dropdown-result" tabindex="0" data-url="${doc.url}">
+              <b>${doc.title}</b><br>
+              <span style="font-size:12px;color:#888;">${doc.category || ''}${doc.tags ? ' | ' + doc.tags.join(', ') : ''}</span>
+            </div>
+          `).join('');
+        } catch (err) {
+          searchDropdown.style.display = 'none';
+          searchDropdown.innerHTML = '';
+        }
+      });
+
+      // Handle result click
+      searchDropdown.addEventListener('click', function(e) {
+        const target = e.target.closest('.dropdown-result');
+        if (target && target.dataset.url) {
+          window.location = target.dataset.url;
+        }
+      });
+
+      // Optional: Allow Enter key to open first result
+      searchBox.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && searchDropdown.innerHTML) {
+          const first = searchDropdown.querySelector('.dropdown-result');
+          if (first && first.dataset.url) {
+            window.location = first.dataset.url;
+          }
+        }
+      });
+
+      // Hide dropdown on outside click
+      document.addEventListener('click', function(e) {
+        if (!searchBox.contains(e.target) && !searchDropdown.contains(e.target)) {
+          searchDropdown.style.display = 'none';
+        }
+      });
+
+      // Click magnifier icon triggers search
+      if (searchIcon) {
+        searchIcon.addEventListener('click', () => {
+          searchBox.dispatchEvent(new Event('input'));
+        });
+      }
+    }
+    // =========== END MEILISEARCH ============
+
+  </script>
+  
+</body>
+</html>

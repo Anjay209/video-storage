@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CertQuest Dashboard</title>
+  <link rel="stylesheet" href="competition.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Top Nav -->
+  <div class="top-header">
+    <div class="nav-left">🌐</div>
+    <div class="nav-title">Dashboard <span class="new-badge">(New!)</span></div>
+    <div class="nav-right">
+  <input type="text" id="navbarSearch" placeholder="Search CertQuest..." />
+  <span class="search-icon" id="navbarSearchIcon">🔍</span>
+  <div id="searchDropdown"></div>
+</div>
+  </div>
+
+  <div class="main-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">CQ</div>
+      <ul class="nav-icons">
+        <li>🏠 <span class="nav-label">Dashboard</span></li>
+        <li>📊 <span class="nav-label">Stats</span></li>
+        <li>🎯 <span class="nav-label">Goals</span></li>
+        <li>📅 <span class="nav-label">Schedule</span></li>
+        <li>⚙️ <span class="nav-label">Settings</span></li>
+      </ul>
+    </aside>
+
+    <!-- Secondary Sidebar -->
+    <aside class="sub-sidebar">
+      <div class="sidebar-header">
+        <span>Physics</span>
+        <span class="dots">⋯</span>
+      </div>
+      <div class="sub-nav-wrapper">
+        <ul class="sub-nav">
+          <li class="active">📶 My Journey</li>
+          <li>🎓 Certify</li>
+          <li>🏆 Leaderboard</li>
+          <li>ℹ️ About</li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Main Journey Card -->
+     <div class="journey-layout">
+    <div class="journey-card">
+      <h2>Your Physics Journey</h2>
+      <p>
+        At Schoolhouse, everyone is a learner—whether mastering academic topics, tutoring others,
+        or helping other tutors improve. You can track your progress here, and also showcase it in
+        your <a href="#">Schoolhouse Portfolio</a>!
+      </p>
+
+      <!-- Progress Steps Wrapper -->
+      <div class="progress-wrapper">
+
+        <div class="journey-step completed">
+          <div class="emoji-marker">✅</div>
+          <div class="step-header">
+            <span class="step-title">Become a Tutor</span>
+            <span class="chevron"><i class="fa-solid fa-chevron-down"></i></span>
+
+          </div>
+        </div>
+
+        <div class="journey-step active">
+          <div class="emoji-marker">⭐</div>
+          <div class="step-header">
+            <span class="step-title">Become a Senior Tutor</span>
+            <span class="chevron"><i class="fa-solid fa-chevron-up"></i></span>
+          </div>
+          <p class="step-subtitle">Expand your impact by helping other tutors grow.</p>
+
+          <div class="benefits-box">
+            <h4>Benefits</h4>
+            <ul>
+              <li>🏅 Gain recognition as one of the top tutors in this subworld</li>
+              <li>🤝 Help new tutors by completing peer reviews</li>
+              <li>🌟 Receive priority consideration for leadership opportunities</li>
+              <li>🎁 Participate in exclusive merch giveaways!</li>
+            </ul>
+          </div>
+
+          <div class="how-box">
+            <h4>How to Become a Senior Tutor</h4>
+          
+            <div class="task-row completed">
+              <div class="check-icon"></div>
+              <span>Become fully certified in one course</span>
+            </div>
+          
+            <div class="task-row in-progress">
+              <div class="check-icon"></div>
+              <span>Host ten <a href="#">highly engaging sessions</a></span>
+              <button>Host Session</button>
+            </div>
+          
+            <div class="task-row completed">
+              <div class="check-icon"></div>
+              <span>Become an intermediate-level peer reviewer</span>
+              <button>Peer Review</button>
+            </div>
+          </div>
+          
+        </div>
+
+        <div class="journey-step locked">
+          <div class="emoji-marker">🔒</div>
+          <div class="step-header">
+            <span class="step-title">Become a Coach</span>
+            <span class="chevron"><i class="fa-solid fa-chevron-down"></i></span>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="profile-card-container">
+    <div class="profile-card">
+      <img class="profile-pic" src="/assets/duckpfp.jpg" alt="Anjay P" />
+      <div class="profile-name">Anjay P <span class="tutor-badge">🎓 Tutor</span></div>
+      <div class="profile-meta">He/Him · Member since Jul 2025</div>
+      <hr />
+      <ul class="profile-stats">
+        <li>💬 0 posts</li>
+        <li>📅 0 sessions attended</li>
+        <li>⭐ 0 questions answered</li>
+      </ul>
+      <button class="profile-btn">Go to Full Profile</button>
+    </div>
+    <br>
+    <div class="profile-card">
+      <div class="profile-name">Quick Actions<span class="tutor-badge"></span></div><br>
+      <button class="profile-btn">Recently Studied Quizlet</button> <br><br>
+      <button class="profile-btn">Missed Questions</button> <br><br>
+      <button class="profile-btn">Competency Analysis</button> <br><br>
+      <button class="profile-btn">Go to Full Profile</button>
+    </div>
+  </div>
+    
+        
+  </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/meilisearch@latest/dist/bundles/meilisearch.umd.min.js"></script>
+<script>
+  // ============ MEILISEARCH INTEGRATION ============
+    // Meilisearch client setup (adjust if you use a different host)
+    const client = new MeiliSearch({ host: 'http://127.0.0.1:7700' });
+    const index = client.index('content');
+    const searchBox = document.getElementById('navbarSearch');
+    const searchDropdown = document.getElementById('searchDropdown');
+    const searchIcon = document.getElementById('navbarSearchIcon');
+
+    if (searchBox && searchDropdown) {
+      searchBox.addEventListener('input', async function(e) {
+        const query = e.target.value.trim();
+        if (!query) {
+          searchDropdown.style.display = 'none';
+          searchDropdown.innerHTML = '';
+          return;
+        }
+        try {
+          const result = await index.search(query, { limit: 5 });
+          if (!result.hits.length) {
+            searchDropdown.style.display = 'none';
+            searchDropdown.innerHTML = '';
+            return;
+          }
+          searchDropdown.style.display = 'block';
+          searchDropdown.innerHTML = result.hits.map(doc => `
+            <div class="dropdown-result" tabindex="0" data-url="${doc.url}">
+              <b>${doc.title}</b><br>
+              <span style="font-size:12px;color:#888;">${doc.category || ''}${doc.tags ? ' | ' + doc.tags.join(', ') : ''}</span>
+            </div>
+          `).join('');
+        } catch (err) {
+          searchDropdown.style.display = 'none';
+          searchDropdown.innerHTML = '';
+        }
+      });
+
+      // Handle result click
+      searchDropdown.addEventListener('click', function(e) {
+        const target = e.target.closest('.dropdown-result');
+        if (target && target.dataset.url) {
+          window.location = target.dataset.url;
+        }
+      });
+
+      // Optional: Allow Enter key to open first result
+      searchBox.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && searchDropdown.innerHTML) {
+          const first = searchDropdown.querySelector('.dropdown-result');
+          if (first && first.dataset.url) {
+            window.location = first.dataset.url;
+          }
+        }
+      });
+
+      // Hide dropdown on outside click
+      document.addEventListener('click', function(e) {
+        if (!searchBox.contains(e.target) && !searchDropdown.contains(e.target)) {
+          searchDropdown.style.display = 'none';
+        }
+      });
+
+      // Click magnifier icon triggers search
+      if (searchIcon) {
+        searchIcon.addEventListener('click', () => {
+          searchBox.dispatchEvent(new Event('input'));
+        });
+      }
+    }
+    // =========== END MEILISEARCH ============
+</script>
+</body>
+</html>

@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CertQuest Dashboard</title>
+  <link rel="stylesheet" href="forum.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/meilisearch@latest/dist/bundles/meilisearch.umd.min.js"></script>
+  
+</head>
+<body>
+
+  <!-- Top Nav -->
+  <div class="top-header">
+    <div class="nav-left">🌐</div>
+    <div class="nav-title">Dashboard <span class="new-badge">(New!)</span></div>
+    <div class="nav-right">
+      <div class="search-container" style="position:relative;">
+        <input type="text" id="navbarSearch" placeholder="Search CertQuest..." autocomplete="off" />
+        <span class="search-icon" id="navbarSearchIcon">🔍</span>
+        <div id="searchDropdown"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section Header -->
+  <div class="section-header-background">
+    <div class="section-header-content">
+      <h1 class="unit-title"><span class="name">Competitions Forum</span></h1>
+      <div class="recent-questions">
+        <h2 class="text">Recent Questions</h2>
+        <div class="question-tabs">
+          <div class="tab active">Not Solved</div>
+          <div class="tab">Solved</div>
+          <div class="tab">All</div>
+        </div>
+        <div class="tab-underline"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-layout">
+    <aside class="sidebar">
+      <div class="logo">CQ</div>
+      <ul class="nav-icons">
+        <li>🏠 <span class="nav-label">Dashboard</span></li>
+        <li>📊 <span class="nav-label">Stats</span></li>
+        <li>🎯 <span class="nav-label">Goals</span></li>
+        <li>📅 <span class="nav-label">Schedule</span></li>
+        <li>⚙️ <span class="nav-label">Settings</span></li>
+      </ul>
+    </aside>
+    <main class="content">
+      <div class="forum-wrapper">
+        <div class="forum-main">
+
+          <!-- Ask Box -->
+          <div class="ask-box">
+            <div class="ask-avatar-wrapper">
+              <img src="/Public/assets/duckpfp.jpg" alt="User avatar" class="ask-avatar" />
+              <div class="online-dot"></div>
+            </div>
+            <button id="askQuestionBtn" class="ask-input" type="button">Ask a question...</button>
+          </div>
+<br><br>
+          <!-- Modal Overlay -->
+         
+
+          <!-- Posts will render here by JS -->
+        </div>
+        <!-- Forum-main ends -->
+        <!-- Side Panel -->
+        <aside class="forum-info-panel">
+            <div class="stats-box">
+                <div class="stats-header">
+                  <h3>Physics Help</h3>
+                  <span class="info-icon">ⓘ</span>
+                </div>
+                <p class="stats-description">To ask Physics questions.</p>
+                <ul class="guidelines">
+                  <li>Provide as much detail as possible.</li>
+                  <li>Share your progress so far.</li>
+                  <li>React with 👀 when helping someone.</li>
+                </ul>
+                <div class="stats-grid">
+                  <div class="stat">
+                    <div class="value posts-count">2064</div>
+                    <div class="label">Posts</div>
+                  </div>
+                  <div class="stat">
+  <div class="value members-count">0</div>
+  <div class="label">Members</div>
+</div>
+                </div>
+              </div>
+          <br>
+          <div class="stats-box">
+            <div class="stats-header">
+              <h3>Stats</h3>
+              <span class="info-icon">ⓘ</span>
+            </div>
+            <div class="stats-grid">
+              <div class="stat">
+  <div class="value solved-percent">0%</div>
+  <div class="label">Solved</div>
+</div>
+              <div class="stat full">
+                <div class="response-line">
+                  <span class="value">0 min</span>
+                </div>
+                <div class="label">Median Response Time</div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <!-- COMMENT PANEL -->
+
+
+
+   <div id="questionModal" class="modal hidden" tabindex="-1">
+            <div class="modal-content">
+              <button class="close-btn" id="closeModal" aria-label="Close modal">&times;</button>
+              <h2>New Question in Physics</h2>
+              <div class="user-info">
+                <img src="/Public/assets/duckpfp.jpg" alt="User Pic" class="user-pic" />
+                <div class="user-name">Anjay P </div>
+              </div>
+              <p class="help-prompt">What do you need help with today?</p>
+              <div class="options">
+                <button class="option-btn" data-type="quick">
+                  ❓ I have a quick question about a problem (&lt;10 minutes)
+                </button>
+                <button class="option-btn" data-type="assignment">
+                  📄 I need help with an assignment (10–30 minutes)
+                </button>
+                <button class="option-btn" data-type="review">
+                  📚 I want to review a topic / learn a new topic (30–90 minutes)
+                </button>
+              </div>
+              <div class="expanded-form hidden">
+                <label>
+                  <strong>Share your problem:</strong>
+                  <textarea placeholder="E.g., I'm trying to solve 4x+2=3 for x..."></textarea>
+                </label>
+                <label>
+                  <strong>What have you tried so far?</strong>
+                  <textarea placeholder="E.g., I tried subtracting 2 but got confused..."></textarea>
+                </label>
+                <label class="zoom-check">
+                  <input type="checkbox" checked />
+                  Yes, request Zoom help!
+                </label>
+                <p class="disclaimer">
+                  By posting, you agree that you're here to learn. Pressuring others to do your homework may lead to suspension.
+                </p>
+              </div>
+              <div class="actions">
+                <button class="cancel-btn">Cancel</button>
+                <button class="post-btn" disabled>Post</button>
+              </div>
+            </div>
+          </div>
+          <!-- End Modal -->
+
+          <div class="comment-panel hidden" id="commentPanel">
+  <div class="comment-header">
+    <span class="comment-title">Entry Details</span>
+    <button class="close-btn" onclick="toggleCommentPanel()">✕</button>
+  </div>
+  <div class="comment-content">
+    <div class="comments-thread" id="commentsThread">
+      <!-- Comments get injected here -->
+    </div>
+  </div>
+  <div class="reply-container">
+    <textarea placeholder="Reply..." class="reply-box"></textarea>
+  </div>
+</div>
+
+<!-- Notification Modal -->
+<div id="notificationModal" class="notification-modal hidden">
+  <div class="notification-content">
+    <p>Post marked as resolved!</p>
+    <button id="closeNotificationBtn">Close</button>
+  </div>
+</div>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // --------- FIREBASE INIT ---------
+    const firebaseConfig = {
+      apiKey: "AIzaSyDGYp9sBwOWBdu9W46Q6XFp9zfLCrEsaO4",
+      authDomain: "certquest-94959.firebaseapp.com",
+      projectId: "certquest-94959",
+      storageBucket: "certquest-94959.appspot.com",
+      messagingSenderId: "323956529033",
+      appId: "1:323956529033:web:e9c9c6a3c7668b8a72f358",
+      measurementId: "G-F5JHTGGN6K"
+    };
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.firestore();
+
+    // --------- AUTH STATE ---------
+    window.currentUser = null;
+    let currentFilter = "not solved";  // track current tab/filter
+
+    firebase.auth().onAuthStateChanged(async (user) => {
+      window.currentUser = user;
+      if (user) {
+        console.log("[CQ] Signed in:", user.email || user.displayName);
+      } else {
+        console.log("[CQ] Not signed in");
+      }
+      await loadForumQuestions(currentFilter);
+      await updatePostCount();
+      await updateMemberCount();
+      await updateSolvedPercentage();
+      await updateMedianResponseTime();
+    });
+
+    // --------- MODAL OPEN/CLOSE ---------
+    const openBtn = document.getElementById("askQuestionBtn");
+    const modal = document.getElementById("questionModal");
+    const closeBtn = document.getElementById("closeModal");
+    const cancelBtn = document.querySelector(".cancel-btn");
+    if (openBtn && modal) openBtn.onclick = () => modal.classList.remove("hidden");
+    if (closeBtn && modal) closeBtn.onclick = () => modal.classList.add("hidden");
+    if (cancelBtn && modal) cancelBtn.onclick = () => modal.classList.add("hidden");
+    if (modal) {
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) modal.classList.add("hidden");
+      });
+    }
+
+    // --------- OPTION SELECTION & FORM SHOW ---------
+    const optionButtons = document.querySelectorAll('.option-btn');
+    const expandedForm = document.querySelector('.expanded-form');
+    optionButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        optionButtons.forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        expandedForm.classList.remove('hidden');
+        checkFormCompletion();
+      });
+    });
+
+    // --------- POST BUTTON ENABLE/DISABLE ---------
+    const textareas = expandedForm.querySelectorAll("textarea");
+    const postBtn = document.querySelector(".post-btn");
+    function checkFormCompletion() {
+      const hasText = Array.from(textareas).some(t => t.value.trim().length > 0);
+      const optionSelected = document.querySelector('.option-btn.selected');
+      if (hasText && optionSelected) {
+        postBtn.removeAttribute("disabled");
+      } else {
+        postBtn.setAttribute("disabled", true);
+      }
+    }
+    textareas.forEach(t => t.addEventListener("input", checkFormCompletion));
+    checkFormCompletion();
+
+    // --------- GET USER PROFILE ---------
+    async function getUserProfile() {
+      const user = window.currentUser;
+      if (!user) return null;
+      let name = user.displayName || (user.email ? user.email.split("@")[0] : "Anonymous");
+      let photo = user.photoURL || "";
+      try {
+        const snap = await db.collection("users").doc(user.uid).get();
+        if (snap.exists && snap.data().name) name = snap.data().name;
+        if (snap.exists && snap.data().photoURL) photo = snap.data().photoURL;
+      } catch {}
+      return { name, photo, uid: user.uid };
+    }
+
+    // --------- POST QUESTION ---------
+    postBtn.addEventListener("click", async () => {
+      const selected = document.querySelector('.option-btn.selected');
+      const helpType = selected ? selected.textContent.trim() : '';
+      const [questionTextarea, triedTextarea] = expandedForm.querySelectorAll('textarea');
+      const question = questionTextarea.value.trim();
+      const tried = triedTextarea.value.trim();
+      const requestZoom = expandedForm.querySelector('input[type=checkbox]').checked;
+
+      if (!helpType || !question) return;
+
+      const user = await getUserProfile();
+      if (!user) {
+        alert("You must be signed in to post!");
+        return;
+      }
+
+      await db.collection("forum-questions").add({
+        userId: user.uid,
+        userName: user.name,
+        userPhoto: user.photo,
+        helpType,
+        question,
+        tried,
+        requestZoom,
+        solved: false,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      // Reset modal and form
+      modal.classList.add("hidden");
+      questionTextarea.value = '';
+      triedTextarea.value = '';
+      expandedForm.classList.add('hidden');
+      postBtn.setAttribute("disabled", true);
+      optionButtons.forEach(b => b.classList.remove("selected"));
+
+      await loadForumQuestions(currentFilter);
+
+      // Update stats after new post
+      await updatePostCount();
+      await updateSolvedPercentage();
+      await updateMedianResponseTime();
+    });
+
+    // --------- LOAD FORUM QUESTIONS ---------
+    async function loadForumQuestions(filter = "not solved") {
+      console.log("[CQ] loadForumQuestions filter:", filter);
+      currentFilter = filter;
+
+      if (window.currentUser === null) {
+        console.log("[CQ] Waiting for auth state before loading posts");
+        return;
+      }
+
+      let query = db.collection("forum-questions").orderBy("timestamp", "desc");
+      if (filter === "not solved") {
+        query = query.where("solved", "==", false);
+      } else if (filter === "solved") {
+        query = query.where("solved", "==", true);
+      }
+
+      const forumMain = document.querySelector('.forum-main');
+      if (!forumMain) return;
+      const askBox = forumMain.querySelector('.ask-box');
+
+      // Clear container once here before rendering anything
+      forumMain.innerHTML = "";
+      if (askBox) forumMain.appendChild(askBox);
+
+      const snapshot = await query.get();
+
+      if (snapshot.empty) {
+        const emptyMsg = document.createElement('div');
+        emptyMsg.style.cssText = "color:#888;text-align:center;padding:2rem;";
+        emptyMsg.textContent = "No unanswered questions. Anything on your mind?";
+        forumMain.appendChild(emptyMsg);
+        return;
+      }
+
+      const currentUserId = window.currentUser ? window.currentUser.uid : null;
+
+      // Build cards asynchronously
+      const cardPromises = snapshot.docs.map(async (doc) => {
+        const data = doc.data();
+        const card = document.createElement('div');
+        card.classList.add('forum-card');
+        card.dataset.id = doc.id;
+
+        // Check if post has any comments
+        let hasComments = false;
+        try {
+          const commentsSnap = await db.collection("forum-questions").doc(doc.id).collection("comments").limit(1).get();
+          hasComments = !commentsSnap.empty;
+        } catch (err) {
+          console.error("Error checking comments for post:", doc.id, err);
+        }
+
+        const showResolveButton = !data.solved && hasComments && currentUserId;
+
+        card.innerHTML = `
+          <div class="card-header">
+            <div class="user-info">
+              <div class="avatar">${data.userName ? data.userName[0] : "A"}</div>
+              <div class="user-details">
+                <div class="user-meta"><strong>${data.userName || "Anonymous"}</strong></div>
+                <div class="time-meta">${data.timestamp ? data.timestamp.toDate().toLocaleString() : ''}</div>
+              </div>
+              <div class="menu-icon">•••</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <p><strong>Type:</strong> ${data.helpType || ""}</p>
+            <p><strong>Question:</strong> ${data.question || ""}</p>
+            <p><strong>Tried:</strong> ${data.tried || ""}</p>
+          </div>
+          <div class="question-footer">
+            <div class="left-icons"></div>
+            <div class="not-solved"><span>${data.solved ? "Solved" : "Not Solved"}</span></div>
+            ${showResolveButton ? `<button class="resolve-btn" data-id="${doc.id}">Resolve</button>` : ""}
+          </div>
+        `;
+        forumMain.appendChild(card);
+      });
+
+      await Promise.all(cardPromises);
+    }
+
+    // --------- DELEGATED EVENT HANDLER FOR CARDS & RESOLVE BUTTONS ---------
+    const forumMain = document.querySelector('.forum-main');
+
+    forumMain.addEventListener('click', async (e) => {
+      // Resolve button click
+      if (e.target.classList.contains('resolve-btn')) {
+        e.stopPropagation();
+        const postId = e.target.dataset.id;
+        if (!postId) return;
+
+        try {
+          await db.collection("forum-questions").doc(postId).update({ solved: true });
+          await loadForumQuestions(currentFilter);
+          await updatePostCount();
+          await updateSolvedPercentage();
+          await updateMedianResponseTime();
+          if (currentCardId === postId) toggleCommentPanel();
+          showNotification("Post marked as resolved!");
+        } catch (error) {
+          alert("Failed to update post status: " + error.message);
+        }
+      }
+      // Card click except on resolve button
+      else if (e.target.closest('.forum-card') && !e.target.classList.contains('resolve-btn')) {
+        const card = e.target.closest('.forum-card');
+        currentCardId = card.dataset.id || "demo";
+        toggleCommentPanel();
+        loadComments(currentCardId);
+      }
+    });
+
+    function showNotification(message) {
+  console.log("showNotification called with message:", message);  // Add this line
+  const modal = document.getElementById("notificationModal");
+  const textElem = modal.querySelector("p");
+  textElem.textContent = message;
+  modal.classList.remove("hidden");
+
+  setTimeout(() => {
+    modal.classList.add("hidden");
+  }, 3000);
+}
+
+
+    // --------- UPDATE POST COUNT ---------
+    async function updatePostCount() {
+      try {
+        const snapshot = await db.collection("forum-questions").get();
+        const count = snapshot.size;
+        const countEl = document.querySelector(".posts-count");
+        if (countEl) countEl.textContent = count.toLocaleString();
+        console.log("[CQ] Post count updated:", count);
+      } catch (error) {
+        console.error("[CQ] Failed to update post count:", error);
+      }
+    }
+
+    // --------- UPDATE MEMBER COUNT ---------
+    async function updateMemberCount() {
+      try {
+        const statsRef = db.collection('stats').doc('membersCount');
+        const doc = await statsRef.get();
+        const count = doc.exists ? doc.data().count || 0 : 0;
+        const countEl = document.querySelector(".members-count");
+        if (countEl) countEl.textContent = count.toLocaleString();
+        console.log("[CQ] Member count updated:", count);
+      } catch (error) {
+        console.error("[CQ] Failed to update member count:", error);
+      }
+    }
+
+    // --------- UPDATE SOLVED PERCENTAGE ---------
+    async function updateSolvedPercentage() {
+      try {
+        const totalSnap = await db.collection("forum-questions").get();
+        const totalCount = totalSnap.size;
+        if (totalCount === 0) {
+          const elem = document.querySelector(".solved-percent");
+          if (elem) elem.textContent = "0%";
+          return;
+        }
+        const solvedSnap = await db.collection("forum-questions").where("solved", "==", true).get();
+        const solvedCount = solvedSnap.size;
+        const percent = Math.round((solvedCount / totalCount) * 100);
+        const elem = document.querySelector(".solved-percent");
+        if (elem) elem.textContent = `${percent}%`;
+        console.log("[CQ] Solved percentage updated:", percent);
+      } catch (error) {
+        console.error("[CQ] Failed to update solved percentage:", error);
+      }
+    }
+
+    // --------- UPDATE MEDIAN RESPONSE TIME ---------
+    async function updateMedianResponseTime() {
+      try {
+        const postsSnapshot = await db.collection("forum-questions").get();
+        const responseTimes = [];
+
+        for (const postDoc of postsSnapshot.docs) {
+          const postData = postDoc.data();
+          const postTimestamp = postData.timestamp ? postData.timestamp.toDate().getTime() : null;
+          if (!postTimestamp) continue;
+
+          const commentsSnapshot = await db.collection("forum-questions")
+            .doc(postDoc.id)
+            .collection("comments")
+            .orderBy("timestamp", "asc")
+            .limit(1)
+            .get();
+
+          if (!commentsSnapshot.empty) {
+            const firstComment = commentsSnapshot.docs[0].data();
+            const commentTimestamp = firstComment.timestamp ? firstComment.timestamp.toDate().getTime() : null;
+            if (commentTimestamp && commentTimestamp >= postTimestamp) {
+              const diffMs = commentTimestamp - postTimestamp;
+              const diffMinutes = Math.round(diffMs / (1000 * 60));
+              responseTimes.push(diffMinutes);
+            }
+          }
+        }
+
+        if (responseTimes.length === 0) {
+          document.querySelector(".response-line .value").textContent = "N/A";
+          return;
+        }
+
+        responseTimes.sort((a, b) => a - b);
+        let median;
+        const mid = Math.floor(responseTimes.length / 2);
+        if (responseTimes.length % 2 === 0) {
+          median = Math.round((responseTimes[mid - 1] + responseTimes[mid]) / 2);
+        } else {
+          median = responseTimes[mid];
+        }
+
+        document.querySelector(".response-line .value").textContent = `${median} min`;
+        console.log("[CQ] Median response time updated:", median, "min");
+
+      } catch (error) {
+        console.error("[CQ] Failed to update median response time:", error);
+      }
+    }
+
+    // --------- COMMENT PANEL TOGGLE ---------
+    let currentCardId = null;
+    function toggleCommentPanel() {
+      const panel = document.getElementById("commentPanel");
+      if (panel.classList.contains("active")) {
+        panel.classList.remove("active");
+        setTimeout(() => panel.classList.add("hidden"), 300);
+      } else {
+        panel.classList.remove("hidden");
+        setTimeout(() => panel.classList.add("active"), 10);
+      }
+    }
+    window.toggleCommentPanel = toggleCommentPanel;
+
+    // --------- LOAD COMMENTS FROM FIRESTORE ---------
+    async function loadComments(postId) {
+      const commentsThread = document.getElementById("commentsThread");
+      commentsThread.innerHTML = "";
+
+      try {
+        const commentsSnapshot = await db.collection("forum-questions").doc(postId).collection("comments").orderBy("timestamp", "asc").get();
+        if (commentsSnapshot.empty) {
+          commentsThread.innerHTML = "<p>No comments yet. Be the first to comment!</p>";
+          return;
+        }
+        commentsSnapshot.forEach(doc => {
+          const data = doc.data();
+          const commentDiv = document.createElement("div");
+          commentDiv.classList.add("comment");
+          commentDiv.innerHTML = `<strong>${data.name}</strong><p>${data.text}</p>`;
+          commentsThread.appendChild(commentDiv);
+        });
+      } catch (error) {
+        commentsThread.innerHTML = "<p>Failed to load comments.</p>";
+        console.error("[CQ] Failed to load comments:", error);
+      }
+    }
+
+    // --------- ADD COMMENT TO FIRESTORE ---------
+    async function addComment(postId, comment) {
+      try {
+        await db.collection("forum-questions").doc(postId).collection("comments").add({
+          name: comment.name,
+          text: comment.text,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      } catch (error) {
+        console.error("[CQ] Failed to add comment:", error);
+        throw error;
+      }
+    }
+
+    // --------- COMMENT BOX SEND ON CTRL+ENTER ---------
+    const replyBox = document.querySelector(".reply-box");
+    if (replyBox) {
+      replyBox.addEventListener("keydown", async (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === "Enter" && currentCardId) {
+          const commentText = replyBox.value.trim();
+          if (!commentText) return;
+          try {
+            await addComment(currentCardId, { name: "You 💬", text: commentText });
+            replyBox.value = "";
+            await loadComments(currentCardId);
+          } catch {
+            alert("Failed to post comment.");
+          }
+        }
+      });
+    }
+
+    // --------- TAB SWITCHING & UNDERLINE ANIMATION ---------
+    const tabs = document.querySelectorAll('.tab');
+    const tabUnderline = document.querySelector('.tab-underline');
+
+    function selectTab(selectedTab) {
+      tabs.forEach(tab => tab.classList.remove('active'));
+      selectedTab.classList.add('active');
+      tabUnderline.style.transform = `translateX(${selectedTab.offsetLeft}px)`;
+      tabUnderline.style.width = `${selectedTab.offsetWidth}px`;
+      const filter = selectedTab.textContent.trim().toLowerCase();
+      loadForumQuestions(filter);
+    }
+    window.selectTab = selectTab;
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => selectTab(tab));
+    });
+
+    const activeTab = document.querySelector('.tab.active');
+    if (activeTab && tabUnderline) {
+      tabUnderline.style.transform = `translateX(${activeTab.offsetLeft}px)`;
+      tabUnderline.style.width = `${activeTab.offsetWidth}px`;
+    }
+
+    // --------- EXPOSE FOR DEBUGGING ---------
+    window.loadForumQuestions = loadForumQuestions;
+    window.currentFilter = currentFilter;
+    window.updatePostCount = updatePostCount;
+    window.updateMemberCount = updateMemberCount;
+    window.updateSolvedPercentage = updateSolvedPercentage;
+    window.updateMedianResponseTime = updateMedianResponseTime;
+  });
+</script>
+
+
+
+
+
+
+
+</body>
+</html>

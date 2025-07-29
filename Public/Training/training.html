@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CertQuest Dashboard</title>
+  <link rel="stylesheet" href="training.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+</head>
+<body>
+
+  <!-- Top Nav -->
+  <div class="top-header">
+    <div class="nav-left">🌐</div>
+    <div class="nav-title">Dashboard <span class="new-badge">(New!)</span></div>
+    <div class="nav-right">
+  <input type="text" id="navbarSearch" placeholder="Search CertQuest..." />
+  <span class="search-icon" id="navbarSearchIcon">🔍</span>
+  <div id="searchDropdown"></div>
+</div>
+  </div>
+
+  <div class="main-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">CQ</div>
+        <ul class="nav-icons">
+          <li>
+            🏠
+            <span class="nav-label">Dashboard</span>
+          </li>
+          <li>
+            📊
+            <span class="nav-label">Stats</span>
+          </li>
+          <li>
+            🎯
+            <span class="nav-label">Goals</span>
+          </li>
+          <li>
+            📅
+            <span class="nav-label">Schedule</span>
+          </li>
+          <li>
+            ⚙️
+            <span class="nav-label">Settings</span>
+          </li>
+        </ul>
+      </aside>
+
+      
+      <section class="tutor-trainings" id="gridSection">
+  <div class="header-section">
+    <span class="heading">Mentor Training</span>
+    <p class="subtext">Boost your tutoring skills with these tips, strategies, and guides. When you're done, refresh concepts by reviewing completed trainings!</p>
+  </div>
+  <div class="tab-wrapper">
+    <div class="tabs">
+      <button class="tab active">Incomplete</button>
+      <button class="tab" id="completedTab">Completed</button>
+    </div>
+  </div>
+  <!-- THIS IS ALL YOU NEED! -->
+  <div class="training-grid"></div>
+</section>
+
+
+    <!-- Full Page Module View -->
+
+<!-- Module view panel -->
+<div id="moduleView" class="hidden">
+  <div class="module-content">
+   <button id="backToModulesBtn">← Back</button>
+   <div class="moduleText"></div>
+    <h2 id="moduleTitle"></h2>
+    <div id="moduleContent"></div>
+    <div class="module-nav-buttons">
+      <div class="center-proceed-btn">
+        <button id="proceedToNextBtn">Proceed →</button>
+      </div>
+    </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Fullscreen Quiz View -->
+<div id="quizView" class="quiz-view hidden">
+  <div class="quiz-container">
+    <div class="quiz-question">
+      <span class="question-number" id="quizNumber">1 →</span>
+      <span class="question-text" id="quizText">As a tutor, why do you ask learners questions?*</span>
+    </div>
+    <textarea class="quiz-answer" id="quizAnswer" placeholder="Type your answer here..."></textarea>
+    <div class="quiz-submit-row">
+      <button class="submit-btn" id="quizOkBtn">OK</button>
+      <span class="enter-hint">press <strong>Enter ↵</strong></span>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<div id="trainingModal" class="modal hidden">
+  <div class="modal-content">
+    <button class="close-modal">&times;</button>
+    <h2 id="modalTitle"></h2>
+    <div class="modal-meta">
+      <span class="skill-badge">SKILL BUILDER</span>
+      <span id="modalTime">8 mins</span>
+      <span class="sp-badge">+10 SP</span>
+    </div>
+    <h3>Description</h3>
+    <p id="modalDesc"></p>
+    <ul id="modalBullets"></ul>
+    <button id="startTrainingBtn">Start Training ↗</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/meilisearch@latest/dist/bundles/meilisearch.umd.min.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  // --- ELEMENTS ---
+  const moduleView = document.getElementById("moduleView");
+  const moduleTitle = document.getElementById("moduleTitle");
+  const moduleContent = document.getElementById("moduleContent");
+  const backBtn = document.getElementById("backToModulesBtn");
+  const modal = document.getElementById("trainingModal");
+  const modalTitle = document.getElementById("modalTitle");
+  const modalDesc = document.getElementById("modalDesc");
+  const modalTime = document.getElementById("modalTime");
+  const modalBullets = document.getElementById("modalBullets");
+  const closeModal = document.querySelector(".close-modal");
+  const startBtn = document.getElementById("startTrainingBtn");
+  const quizView = document.getElementById("quizView");
+  const proceedBtn = document.getElementById("proceedToNextBtn");
+  const tabs = document.querySelectorAll(".tab");
+  const gridSection = document.getElementById("gridSection");
+  const grid = document.querySelector(".training-grid");
+
+  // --- QUIZ ELEMENTS ---
+  const quizNumber = document.getElementById("quizNumber");
+  const quizText = document.getElementById("quizText");
+  const quizAnswer = document.getElementById("quizAnswer");
+  const quizOkBtn = document.getElementById("quizOkBtn");
+
+  // --- FIREBASE ---
+  const firebaseConfig = {
+    apiKey: "AIzaSyDGYp9sBwOWBdu9W46Q6XFp9zfLCrEsaO4",
+    authDomain: "certquest-94959.firebaseapp.com",
+    projectId: "certquest-94959",
+    storageBucket: "certquest-94959.appspot.com",
+    messagingSenderId: "323956529033",
+    appId: "1:323956529033:web:e9c9c6a3c7668b8a72f358",
+    measurementId: "G-F5JHTGGN6K"
+  };
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  // --- MODULE DATA ---
+  const MODULE_DATA = {
+    "intro-bm": {
+      title: "Intro to Business Management",
+      description: "This module covers the foundations of business management including strategy, planning, and team leadership.",
+      bullets: ["What is management?", "Managing small teams", "Common pitfalls"],
+      time: "12 mins",
+      sp: "+10 SP",
+      content: `<p>This module covers the foundations of business management including strategy, planning, and team leadership.</p>`
+    },
+     "what-bm": {
+      title: "Intro to Business Management",
+      description: "This module covers the foundations of business management including strategy, planning, and team leadership.",
+      bullets: ["What is management?", "Managing small teams", "Common pitfalls"],
+      time: "12 mins",
+      sp: "+10 SP",
+      content: `<p>This module covers the foundations of business management including strategy, planning, and team leadership.</p>`
+    },
+     "the-bm": {
+      title: "Intro to Business Management",
+      description: "This module covers the foundations of business management including strategy, planning, and team leadership.",
+      bullets: ["What is management?", "Managing small teams", "Common pitfalls"],
+      time: "12 mins",
+      sp: "+10 SP",
+      content: `<p>This module covers the foundations of business management including strategy, planning, and team leadership.</p>`
+    },
+     "sigmro-bm": {
+      title: "Intro to Business Management",
+      description: "This module covers the foundations of business management including strategy, planning, and team leadership.",
+      bullets: ["What is management?", "Managing small teams", "Common pitfalls"],
+      time: "12 mins",
+      sp: "+10 SP",
+      content: `<p>This module covers the foundations of business management including strategy, planning, and team leadership.</p>`
+    },
+    "marketing-101": {
+      title: "Marketing 101",
+      description: "Learn about the 4Ps, branding strategies, and digital marketing essentials.",
+      bullets: ["The 4 Ps of marketing", "Brand positioning", "Social media strategy"],
+      time: "8 mins",
+      sp: "+10 SP",
+      content: `<p>Learn about the 4Ps, branding strategies, and digital marketing essentials.</p>`
+    },
+     "hey-101": {
+      title: "Marketing 101",
+      description: "Learn about the 4Ps, branding strategies, and digital marketing essentials.",
+      bullets: ["The 4 Ps of marketing", "Brand positioning", "Social media strategy"],
+      time: "8 mins",
+      sp: "+10 SP",
+      content: `<p>Learn about the 4Ps, branding strategies, and digital marketing essentials.</p>`
+    },
+     "hi-101": {
+      title: "Marketing 101",
+      description: "Learn about the 4Ps, branding strategies, and digital marketing essentials.",
+      bullets: ["The 4 Ps of marketing", "Brand positioning", "Social media strategy"],
+      time: "8 mins",
+      sp: "+10 SP",
+      content: `<p>Learn about the 4Ps, branding strategies, and digital marketing essentials.</p>`
+     },
+      "erm-101": {
+      title: "Marketing 101",
+      description: "Learn about the 4Ps, branding strategies, and digital marketing essentials.",
+      bullets: ["The 4 Ps of marketing", "Brand positioning", "Social media strategy"],
+      time: "8 mins",
+      sp: "+10 SP",
+      content: `<p>Learn about the 4Ps, branding strategies, and digital marketing essentials.</p>`
+    }
+    // ... more modules ...
+  };
+  const MODULE_IDS = Object.keys(MODULE_DATA);
+  let mentorId = null; // will be set once we have UID
+  let lastProgress = {};
+
+  // --- QUIZ DATA ---
+  const quizQuestions = [
+    { question: "As a tutor, why do you ask learners questions?*", placeholder: "Type your answer here..." },
+    { question: "How would you handle a student who isn't responding?", placeholder: "Type your answer here..." },
+    { question: "Describe a strategy for keeping learners engaged.", placeholder: "Type your answer here..." }
+  ];
+  let quizIndex = 0;
+  let currentModuleId = null;
+
+  // --- DYNAMIC CARD RENDERING ---
+  function renderTrainingGrid(progress, completed = false) {
+    grid.innerHTML = "";
+    MODULE_IDS.forEach(moduleId => {
+      const module = MODULE_DATA[moduleId];
+      const status = progress[moduleId] || "not-started";
+      if ((completed && status === "completed") || (!completed && status !== "completed")) {
+        const card = document.createElement("div");
+        card.className = "training-card" + (status === "completed" ? " completed" : "");
+        card.dataset.module = moduleId;
+        card.innerHTML = `
+          <div class="badge ${status === "completed" ? "completed" : "optional"}">
+            ${status === "completed" ? "COMPLETED" : (status === "in-progress" ? "IN PROGRESS" : "NOT STARTED")}
+          </div>
+          <h4>${module.title}</h4>
+          <p>${module.description}</p>
+          <div class="training-meta">
+            <span class="skill">SKILL BUILDER</span>
+            <span class="time">${module.time}</span>
+            <span class="sp">${module.sp}</span>
+          </div>
+        `;
+        if (status !== "completed") {
+          card.addEventListener("click", () => {
+            currentModuleId = moduleId;
+            setModuleStatus(moduleId, "in-progress").then(() => {
+              showModuleModal(moduleId);
+            });
+          });
+        }
+        grid.appendChild(card);
+      }
+    });
+  }
+
+  // --- TABS HANDLING ---
+  function showGridView() {
+    gridSection.classList.remove("hidden");
+    moduleView.classList.add("hidden");
+    moduleView.classList.remove("active");
+    quizView.classList.add("hidden");
+    quizView.classList.remove("active");
+    modal.classList.remove("active");
+    modal.classList.add("hidden");
+    renderTrainingGrid(lastProgress, false);
+    if (tabs.length >= 2) {
+      tabs[0].classList.add("active");
+      tabs[1].classList.remove("active");
+    }
+    if (!document.getElementById("quizOkBtn") && quizView) {
+      quizView.innerHTML = `
+        <div class="quiz-container">
+          <div class="quiz-question">
+            <span class="question-number" id="quizNumber"></span>
+            <span class="question-text" id="quizText"></span>
+          </div>
+          <textarea class="quiz-answer" id="quizAnswer" placeholder="Type your answer here..."></textarea>
+          <div class="quiz-submit-row">
+            <button class="submit-btn" id="quizOkBtn">OK</button>
+            <span class="enter-hint">press <strong>Enter ↵</strong></span>
+          </div>
+        </div>
+      `;
+      setupQuizListeners();
+    }
+  }
+  function showCompletedView() {
+    gridSection.classList.remove("hidden");
+    moduleView.classList.add("hidden");
+    moduleView.classList.remove("active");
+    quizView.classList.add("hidden");
+    quizView.classList.remove("active");
+    modal.classList.remove("active");
+    modal.classList.add("hidden");
+    renderTrainingGrid(lastProgress, true);
+    if (tabs.length >= 2) {
+      tabs[1].classList.add("active");
+      tabs[0].classList.remove("active");
+    }
+  }
+  if (tabs.length >= 2) {
+    tabs[0].addEventListener("click", showGridView);
+    tabs[1].addEventListener("click", showCompletedView);
+  }
+
+  // --- MODAL HANDLING ---
+  function showModuleModal(moduleId) {
+    const module = MODULE_DATA[moduleId];
+    modalTitle.textContent = module.title;
+    modalDesc.textContent = module.description;
+    modalTime.textContent = module.time;
+    modalBullets.innerHTML = module.bullets.map(b => `<li>${b}</li>`).join("");
+    modal.classList.add("active");
+    modal.classList.remove("hidden");
+  }
+  closeModal.addEventListener("click", () => {
+    modal.classList.remove("active");
+    modal.classList.add("hidden");
+  });
+
+  startBtn.addEventListener("click", () => {
+    if (!currentModuleId) return;
+    const module = MODULE_DATA[currentModuleId];
+    moduleTitle.textContent = module.title;
+    moduleContent.innerHTML = module.content;
+    modal.classList.remove("active");
+    modal.classList.add("hidden");
+    gridSection.classList.add("hidden");
+    moduleView.classList.remove("hidden");
+    moduleView.classList.add("active");
+    quizView.classList.add("hidden");
+    quizView.classList.remove("active");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+  backBtn.addEventListener("click", () => {
+    moduleView.classList.add("hidden");
+    moduleView.classList.remove("active");
+    gridSection.classList.remove("hidden");
+    quizView.classList.add("hidden");
+    quizView.classList.remove("active");
+    modal.classList.remove("active");
+    modal.classList.add("hidden");
+  });
+  proceedBtn.addEventListener("click", () => {
+    moduleView.classList.add("hidden");
+    moduleView.classList.remove("active");
+    showQuiz();
+    gridSection.classList.add("hidden");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  // --- QUIZ LOGIC ---
+  function loadQuizQuestion(index) {
+    const quizNumber = document.getElementById("quizNumber");
+    const quizText = document.getElementById("quizText");
+    const quizAnswer = document.getElementById("quizAnswer");
+    const quizOkBtn = document.getElementById("quizOkBtn");
+    if (index < quizQuestions.length) {
+      quizNumber.textContent = `${index + 1} →`;
+      quizText.textContent = quizQuestions[index].question;
+      quizAnswer.value = "";
+      quizAnswer.placeholder = quizQuestions[index].placeholder;
+      quizAnswer.focus();
+      quizOkBtn.onclick = function() {
+        quizIndex++;
+        loadQuizQuestion(quizIndex);
+      };
+      quizAnswer.onkeydown = function(e) {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          quizOkBtn.click();
+        }
+      };
+    } else {
+      quizView.innerHTML = `
+        <div style="
+  min-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+">
+  <div style="
+    background: #fff;
+    padding: 2.2rem 2.5rem 2rem 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 40px rgba(37,99,235,0.08), 0 1.5px 4px rgba(0,0,0,0.07);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  ">
+    <div style="
+      font-size: 2.1rem;
+      font-weight: 800;
+      color: #111;
+      margin-bottom: 0.7rem;
+      letter-spacing: -1px;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    ">
+      All done! <span>🎉</span>
+    </div>
+    <button id="backToModulesFromQuiz" style="
+      background: #2563eb;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.15rem;
+      border: none;
+      border-radius: 9px;
+      padding: 0.75rem 2.2rem;
+      margin-top: 0;
+      box-shadow: 0 2px 18px rgba(37,99,235,0.09);
+      cursor: pointer;
+      transition: background 0.18s;
+    "
+    onmouseover="this.style.background='#184dc6'"
+    onmouseout="this.style.background='#2563eb'"
+    >Back to Modules</button>
+  </div>
+</div>
+
+      `;
+      setModuleStatus(currentModuleId, "completed");
+      document.getElementById("backToModulesFromQuiz").onclick = () => {
+        showGridView();
+      };
+    }
+  }
+  function setupQuizListeners() {
+    const quizOkBtn = document.getElementById("quizOkBtn");
+    const quizAnswer = document.getElementById("quizAnswer");
+    quizOkBtn.onclick = function() {
+      quizIndex++;
+      loadQuizQuestion(quizIndex);
+    };
+    quizAnswer.onkeydown = function(e) {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        quizOkBtn.click();
+      }
+    };
+    loadQuizQuestion(quizIndex);
+  }
+  function showQuiz() {
+    quizIndex = 0;
+    quizView.classList.remove("hidden");
+    quizView.classList.add("active");
+    quizView.innerHTML = `
+      <div class="quiz-container">
+        <div class="quiz-question">
+          <span class="question-number" id="quizNumber"></span>
+          <span class="question-text" id="quizText"></span>
+        </div>
+        <textarea class="quiz-answer" id="quizAnswer" placeholder="Type your answer here..."></textarea>
+        <div class="quiz-submit-row">
+          <button class="submit-btn" id="quizOkBtn">OK</button>
+          <span class="enter-hint">press <strong>Enter ↵</strong></span>
+        </div>
+      </div>
+    `;
+    setupQuizListeners();
+  }
+
+  // --- FIRESTORE HELPERS ---
+  async function setModuleStatus(moduleId, status) {
+    if (!mentorId) return; // don't do anything if no user loaded
+    await db.doc(`mentors/${mentorId}/trainingProgress/${moduleId}`).set({ status }, { merge: true });
+  }
+
+  // --- USER PROFILE TO UID LOOKUP ---
+  async function getMentorIdFromEmail(email) {
+    // Assumes you have a users collection and emails are unique
+    const snap = await db.collection("users").where("email", "==", email).get();
+    if (!snap.empty) {
+      return snap.docs[0].data().uid;
+    }
+    return null;
+  }
+
+  // --- MAIN APP LOGIC ONCE UID LOADED ---
+  async function startAppWithMentorId(uid) {
+    mentorId = uid;
+
+    // Firestore listener for individualized progress
+    db.collection(`mentors/${mentorId}/trainingProgress`).onSnapshot((snap) => {
+      const progress = {};
+      snap.forEach(doc => progress[doc.id] = doc.data().status);
+      lastProgress = progress;
+      const activeTab = document.querySelector(".tab.active");
+      if (activeTab && tabs.length >= 2 && activeTab === tabs[1]) {
+        renderTrainingGrid(progress, true);
+      } else {
+        renderTrainingGrid(progress, false);
+      }
+    });
+
+    // Initial view
+    showGridView();
+  }
+
+  // ---- 👇 FETCH CURRENT USER EMAIL & LOAD UID ----
+  async function initApp() {
+    // TODO: Replace this with your logic to get the current user's email:
+    // You might use Firebase Auth, or read it from session, etc.
+    const userEmail = await getLoggedInUserEmail();
+    if (!userEmail) {
+      alert("No user email found. Please log in.");
+      return;
+    }
+    const uid = await getMentorIdFromEmail(userEmail);
+    if (!uid) {
+      alert("No user profile found for this email.");
+      return;
+    }
+    startAppWithMentorId(uid);
+  }
+
+  // Stub: Replace with real implementation (Firebase Auth, etc.)
+  async function getLoggedInUserEmail() {
+    // EXAMPLE ONLY: Replace this function with your actual logic
+    // Return a real email string of the logged-in user.
+    // e.g., firebase.auth().currentUser.email
+    return "456@gmail.com";
+  }
+
+  // --- RUN IT! ---
+  initApp();
+
+  // ============ MEILISEARCH INTEGRATION ============
+  const client = new MeiliSearch({ host: 'http://127.0.0.1:7700' });
+  const index = client.index('content');
+  const searchBox = document.getElementById('navbarSearch');
+  const searchDropdown = document.getElementById('searchDropdown');
+  const searchIcon = document.getElementById('navbarSearchIcon');
+
+  if (searchBox && searchDropdown) {
+    searchBox.addEventListener('input', async function(e) {
+      const query = e.target.value.trim();
+      if (!query) {
+        searchDropdown.style.display = 'none';
+        searchDropdown.innerHTML = '';
+        return;
+      }
+      try {
+        const result = await index.search(query, { limit: 5 });
+        if (!result.hits.length) {
+          searchDropdown.style.display = 'none';
+          searchDropdown.innerHTML = '';
+          return;
+        }
+        searchDropdown.style.display = 'block';
+        searchDropdown.innerHTML = result.hits.map(doc => `
+          <div class="dropdown-result" tabindex="0" data-url="${doc.url}">
+            <b>${doc.title}</b><br>
+            <span style="font-size:12px;color:#888;">${doc.category || ''}${doc.tags ? ' | ' + doc.tags.join(', ') : ''}</span>
+          </div>
+        `).join('');
+      } catch (err) {
+        searchDropdown.style.display = 'none';
+        searchDropdown.innerHTML = '';
+      }
+    });
+
+    searchDropdown.addEventListener('click', function(e) {
+      const target = e.target.closest('.dropdown-result');
+      if (target && target.dataset.url) {
+        window.location = target.dataset.url;
+      }
+    });
+
+    searchBox.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && searchDropdown.innerHTML) {
+        const first = searchDropdown.querySelector('.dropdown-result');
+        if (first && first.dataset.url) {
+          window.location = first.dataset.url;
+        }
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      if (!searchBox.contains(e.target) && !searchDropdown.contains(e.target)) {
+        searchDropdown.style.display = 'none';
+      }
+    });
+
+    if (searchIcon) {
+      searchIcon.addEventListener('click', () => {
+        searchBox.dispatchEvent(new Event('input'));
+      });
+    }
+  }
+  // =========== END MEILISEARCH ============
+});
+</script>
+
+
+
+
+
+</body>
+</html>
